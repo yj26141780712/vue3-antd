@@ -78,6 +78,12 @@ onMounted(() => {
             }
         }
 
+        .main {
+            width: 368px;
+            min-width: 260px;
+            margin: 0 auto;
+        }
+
         .footer {
             position: absolute;
             bottom: 0;
@@ -87,5 +93,14 @@ onMounted(() => {
         }
     }
 
+    /**深度样式修改 */
+    :deep(.ant-tabs .ant-tabs-nav:before) {
+        border-bottom: none;
+    }
+
 }
 </style>
+<style>
+
+</style>
+
