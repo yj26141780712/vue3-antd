@@ -7,6 +7,7 @@ export default {
         'autoLogin': '自动登录',
         'forgotPassword': '忘记密码',
         'register': '注册账户',
-        'getCode': '获取验证码'
+        'getCode': '获取验证码',
+        'userNameRequired': '请输入用户名'
     }
 }

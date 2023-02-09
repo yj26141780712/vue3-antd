@@ -1,6 +1,6 @@
 
 <template>
-    <a-form :model="formState">
+    <a-form :model="formState" :rules="rules">
         <a-tabs v-model:activeKey="activeKey" centered="true">
             <a-tab-pane key="tab1" tab="账号密码登录">
                 <a-form-item name="userName">
@@ -61,7 +61,9 @@
 </template>
 <script setup lang="ts">
 import type { FormInstance } from 'ant-design-vue';
+import type { Rule } from 'ant-design-vue/es/form/interface';
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n';
 interface FormState {
     userName: string;
     password: string;
@@ -77,7 +79,17 @@ const formState = reactive<FormState>({
     code: ''
 })
 const isShowPassword = ref(false);
+const { t } = useI18n();
+console.log(t('login'));
+const rules: Record<string, Rule[]> = reactive({
+    userName: [{ required: true, message: t('login.userNameRequired') }],
+    password: [{ required: true, message: '1213' }],
+    mobile: [{ required: false, message: '1213' }],
+    code: [{ required: false, message: '1213' }]
+});
 const onSubmit = () => {
     console.log('handleSubmit');
+    console.log(activeKey);
+    console.log(rules);
 }
 </script>

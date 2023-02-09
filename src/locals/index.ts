@@ -9,6 +9,7 @@ const messages = {
 }
 const language = (navigator.language || 'zh').toLocaleLowerCase()
 const i18n = createI18n({
+    legacy: false,
     locale: localStorage.getItem(CACHE_LANG) || language.split('-')[0] || 'zh',
     fallbackLocale: 'zh',
     messages
