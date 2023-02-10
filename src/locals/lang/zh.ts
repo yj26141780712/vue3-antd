@@ -12,5 +12,10 @@ export default {
         'passwordRequired': '请输入密码',
         'mobileRequired': '请输入手机号',
         'codeRequired': '请输入验证码'
+    },
+    system: {
+        api: {
+            'apiRequestFailed': 'API请求失败'
+        }
     }
 }

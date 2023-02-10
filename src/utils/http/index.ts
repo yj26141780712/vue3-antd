@@ -1,10 +1,17 @@
+import { ResultEnum } from '@/enums/ResultEnum';
 import type { RequestOptions, Result } from '@/types/axios';
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import i18n from '@/locals';
+
+const defaultOption: RequestOptions = {
+    isReturnNativeResponse: false,
+    isTransformResponse: true,
+    errorMessageMode: 'message',
+    successMessageMode: 'message'
+}
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_DOMAIN_API,
-    timeout: 1000,
-    headers: { 'X-Custom-Header': 'foobar' }
+    baseURL: import.meta.env.VITE_DOMAIN_API
 });
 
 instance.interceptors.request.use(function (config) {
@@ -20,31 +27,56 @@ instance.interceptors.response.use(function (response) {
     return Promise.reject(error);
 })
 
-const transformRequestHook = function (res: AxiosResponse<Result>) {
-
+const transformRequestHook = function (res: AxiosResponse<Result>, options: RequestOptions) {
+    const { t } = i18n.global;
+    const { isReturnNativeResponse, isTransformResponse } = options;
+    if (isReturnNativeResponse) {
+        return res;
+    }
+    if (!isTransformResponse) {
+        return res.data;
+    }
+    const { data } = res;
+    if (!data) {
+        throw new Error(t('sys.api.apiRequestFailed'));
+    }
+    const { code, message } = data;
+    if (code === ResultEnum.Ok) {
+        if (message && options.successMessageMode) {
+            console.log('输出成功提示信息！')
+        }
+        return data.data;
+    } else {
+        if (message && options.errorMessageMode) {
+            console.log('输出错误提示信息！')
+        }
+        throw new Error(message);
+    }
 }
 
 const setHeader = () => {
 
 }
 
-const get = async function (conf: AxiosRequestConfig<any>, options: RequestOptions) {
+const get = async function <T = any>(conf: AxiosRequestConfig<any>, options?: RequestOptions): Promise<T> {
     return request({ ...conf, method: 'GET' }, options)
 }
 
-const post = async function (conf: AxiosRequestConfig<any>, options: RequestOptions) {
+const post = async function <T = any>(conf: AxiosRequestConfig<any>, options?: RequestOptions): Promise<T> {
     return request({ ...conf, method: 'POST' }, options)
 }
 
-const request = async function (conf: AxiosRequestConfig<any>, options: RequestOptions) {
+const request = async function <T = any>(conf: AxiosRequestConfig<any>, options?: RequestOptions): Promise<T> {
+    options = { ...defaultOption, ...options };
     try {
         const res = await instance.request(conf);
-        transformRequestHook(res);
-        return [null, res.data];
-    } catch (e) {
-        return [e];
+        return await Promise.resolve(transformRequestHook(res, options));
+    } catch (err) {
+        console.log(err);
+        return await Promise.reject(err);
     }
 }
+
 
 export const http = {
     get,

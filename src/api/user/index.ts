@@ -1,18 +1,18 @@
 
 import type { ErrorMessageMode } from "@/types/axios";
 import { http } from "@/utils/http";
-import type { LoginParams } from "./model/userModel";
+import type { LoginParams, LoginResultModel } from "./model/userModel";
 
 enum Api {
     AccountLogin = '',
     MobileLogin = ''
 }
 
-export async function loginApi(info: LoginParams, mode: ErrorMessageMode) {
-    const [err, data] = await http.get({
+export function loginApi(info: LoginParams) {
+    return http.get<LoginResultModel>({
         url: 'account/loginByPassword', params: {
             username: info.userName,
             password: info.password
         }
-    });
+    }, { errorMessageMode: 'message' });
 }

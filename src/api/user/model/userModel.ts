@@ -4,3 +4,8 @@ export interface LoginParams {
     mobile: string;
     code: string
 }
+
+export interface LoginResultModel {
+    stoken: string;
+    ltoken: string;
+}

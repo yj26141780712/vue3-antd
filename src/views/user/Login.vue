@@ -112,12 +112,11 @@ const onSubmit = () => {
 const { user } = useStore();
 
 const finish = async function () {
-    const err = await user.login(formState, activeKey.value);
-    if (err) {
-        console.log('验证失败！');
+    try {
+        const res = await user.login(formState, activeKey.value);
+        console.log(res);
+    } catch (err) {
         console.log(err);
-    } else {
-        console.log('验证成功!');
     }
 }
 </script>

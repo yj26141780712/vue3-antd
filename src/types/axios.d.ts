@@ -5,10 +5,15 @@ export interface RequestOptions {
     errorMessageMode?: ErrorMessageMode;
     // 成功消息提示类型
     successMessageMode?: SuccessMessageMode;
+    // 是否返回原生请求头
+    isReturnNativeResponse?: boolean;
+    // 是否处理请求结果
+    isTransformResponse?: boolean;
 }
 
 export interface Result {
-    code: string;
+    code: ResultEnum;
     message: string;
     data: any
 }
+
