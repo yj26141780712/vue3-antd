@@ -58,7 +58,8 @@
             }}</router-link>
         </a-form-item>
         <a-form-item>
-            <a-button type="primary" size="large" html-type="submit" block @click="onSubmit">确定</a-button>
+            <a-button type="primary" size="large" html-type="submit" block :loading="loading"
+                @click="onSubmit">确定</a-button>
         </a-form-item>
         <a-form-item>
             <router-link :to="{ name: 'register' }" class="forge-password" style="float: right;">{{
@@ -74,22 +75,28 @@ import type { FormInstance } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/es/form/interface';
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n';
+
 interface FormState {
     userName: string;
     password: string;
     mobile: string;
     code: string;
 }
-const activeKey = ref(LoginType.AccountLogin)
-const formRef = ref<FormInstance>()
+
+const loading = ref(false);
+const isShowPassword = ref(false);
+const activeKey = ref(LoginType.AccountLogin);
+const formRef = ref<FormInstance>();
 const formState = reactive<FormState>({
     userName: '',
     password: '',
     mobile: '',
     code: ''
-})
-const isShowPassword = ref(false);
+});
+
 const { t } = useI18n();
+const { user } = useStore();
+
 const rules: Record<string, Rule[]> = reactive({
     userName: [{ required: true, message: t('login.userNameRequired') }],
     password: [{ required: true, message: t('login.passwordRequired') }],
@@ -107,16 +114,19 @@ const onSubmit = () => {
     console.log('handleSubmit');
     console.log(activeKey);
     console.log(rules);
+    loading.value = true;
 }
 
-const { user } = useStore();
+
 
 const finish = async function () {
     try {
         const res = await user.login(formState, activeKey.value);
         console.log(res);
+        loading.value = false;
     } catch (err) {
         console.log(err);
+        loading.value = false;
     }
 }
 </script>

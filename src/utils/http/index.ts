@@ -2,6 +2,9 @@ import { ResultEnum } from '@/enums/ResultEnum';
 import type { RequestOptions, Result } from '@/types/axios';
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import i18n from '@/locals';
+import { useMessage } from '@/hooks/web/useMessage';
+
+const { createMessage } = useMessage();
 
 const defaultOption: RequestOptions = {
     isReturnNativeResponse: false,
@@ -43,12 +46,12 @@ const transformRequestHook = function (res: AxiosResponse<Result>, options: Requ
     const { code, message } = data;
     if (code === ResultEnum.Ok) {
         if (message && options.successMessageMode) {
-            console.log('输出成功提示信息！')
+            createMessage.success('操作成功！');
         }
         return data.data;
     } else {
         if (message && options.errorMessageMode) {
-            console.log('输出错误提示信息！')
+            createMessage.error(message);
         }
         throw new Error(message);
     }
