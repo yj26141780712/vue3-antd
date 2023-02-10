@@ -1,8 +1,8 @@
 
 <template>
-    <a-form :model="formState" :rules="rules">
-        <a-tabs v-model:activeKey="activeKey" centered="true">
-            <a-tab-pane key="tab1" tab="账号密码登录">
+    <a-form :model="formState" :rules="rules" @finish="finish">
+        <a-tabs v-model:activeKey="activeKey" :centered="true" @change="tabsChange">
+            <a-tab-pane key="account" tab="账号密码登录">
                 <a-form-item name="userName">
                     <a-input v-model:value="formState.userName" type="text" :placeholder="$t('login.userName')"
                         size="large">
@@ -25,16 +25,24 @@
                     </a-input>
                 </a-form-item>
             </a-tab-pane>
-            <a-tab-pane key="tab2" tab="手机号登录" force-render>
+            <a-tab-pane key="mobile" tab="手机号登录" force-render>
                 <a-form-item name="mobile">
                     <a-input v-model:value="formState.mobile" type="text" :placeholder="$t('login.mobile')"
-                        size="large" />
+                        size="large">
+                        <template #prefix>
+                            <mobile-outlined :style="{ color: 'rgba(0,0,0,.25)' }" />
+                        </template>
+                    </a-input>
                 </a-form-item>
-                <a-row gutter="16">
+                <a-row :gutter="16">
                     <a-col span="16">
                         <a-form-item name="code">
                             <a-input v-model:value="formState.code" type="text" autocomplete="off"
-                                :placeholder="$t('login.code')" size="large" />
+                                :placeholder="$t('login.code')" size="large">
+                                <template #prefix>
+                                    <mail-outlined :style="{ color: 'rgba(0,0,0,.25)' }" />
+                                </template>
+                            </a-input>
                         </a-form-item>
                     </a-col>
                     <a-col span="8">
@@ -60,6 +68,8 @@
     </a-form>
 </template>
 <script setup lang="ts">
+import { LoginType } from '@/enums/loginEnum';
+import useStore from '@/stores';
 import type { FormInstance } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/es/form/interface';
 import { reactive, ref } from 'vue'
@@ -70,7 +80,7 @@ interface FormState {
     mobile: string;
     code: string;
 }
-const activeKey = ref('tab1')
+const activeKey = ref(LoginType.AccountLogin)
 const formRef = ref<FormInstance>()
 const formState = reactive<FormState>({
     userName: '',
@@ -80,16 +90,34 @@ const formState = reactive<FormState>({
 })
 const isShowPassword = ref(false);
 const { t } = useI18n();
-console.log(t('login'));
 const rules: Record<string, Rule[]> = reactive({
     userName: [{ required: true, message: t('login.userNameRequired') }],
-    password: [{ required: true, message: '1213' }],
-    mobile: [{ required: false, message: '1213' }],
-    code: [{ required: false, message: '1213' }]
+    password: [{ required: true, message: t('login.passwordRequired') }],
+    mobile: [{ required: false, message: t('login.mobileRequired') }],
+    code: [{ required: false, message: t('login.codeRequired') }]
 });
+
+const tabsChange = () => {
+    rules.userName[0].required = activeKey.value === LoginType.AccountLogin;
+    rules.password[0].required = activeKey.value === LoginType.AccountLogin;
+    rules.mobile[0].required = activeKey.value === LoginType.CodeLogin;
+    rules.code[0].required = activeKey.value === LoginType.CodeLogin;
+}
 const onSubmit = () => {
     console.log('handleSubmit');
     console.log(activeKey);
     console.log(rules);
+}
+
+const { user } = useStore();
+
+const finish = async function () {
+    const err = await user.login(formState, activeKey.value);
+    if (err) {
+        console.log('验证失败！');
+        console.log(err);
+    } else {
+        console.log('验证成功!');
+    }
 }
 </script>
