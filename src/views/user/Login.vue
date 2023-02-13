@@ -1,6 +1,6 @@
 
 <template>
-    <a-form :model="formState" :rules="rules" @finish="finish">
+    <a-form :model="formState" :rules="rules" @finish="finish" @finishFailed="finishFailed">
         <a-tabs v-model:activeKey="activeKey" :centered="true" @change="tabsChange">
             <a-tab-pane key="account" tab="账号密码登录">
                 <a-form-item name="userName">
@@ -70,6 +70,7 @@
 </template>
 <script setup lang="ts">
 import { LoginType } from '@/enums/loginEnum';
+import { useMessage } from '@/hooks/web/useMessage';
 import useStore from '@/stores';
 import type { FormInstance } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/es/form/interface';
@@ -96,6 +97,7 @@ const formState = reactive<FormState>({
 
 const { t } = useI18n();
 const { user } = useStore();
+const { createMessage, createErrorModal } = useMessage();
 
 const rules: Record<string, Rule[]> = reactive({
     userName: [{ required: true, message: t('login.userNameRequired') }],
@@ -125,8 +127,13 @@ const finish = async function () {
         console.log(res);
         loading.value = false;
     } catch (err) {
-        console.log(err);
+        // createMessage.error(err.message || t('sys.api.networkExceptionMsg'));
+        createErrorModal({ content: err.message, iconType: 'error' })
         loading.value = false;
     }
+}
+
+const finishFailed = function () {
+    loading.value = false;
 }
 </script>

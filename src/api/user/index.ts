@@ -8,11 +8,11 @@ enum Api {
     MobileLogin = ''
 }
 
-export function loginApi(info: LoginParams) {
+export function loginApi(info: LoginParams, errorMessageMode: ErrorMessageMode = 'message') {
     return http.get<LoginResultModel>({
         url: 'account/loginByPassword', params: {
             username: info.userName,
             password: info.password
         }
-    }, { errorMessageMode: 'message' });
+    }, { errorMessageMode });
 }

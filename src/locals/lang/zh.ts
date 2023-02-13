@@ -1,4 +1,7 @@
 export default {
+    common: {
+        okText: '确定'
+    },
     login: {
         'userName': '用户名',
         'password': '密码',
@@ -15,7 +18,8 @@ export default {
     },
     system: {
         api: {
-            'apiRequestFailed': 'API请求失败'
+            'apiRequestFailed': 'API请求失败',
+            networkExceptionMsg: '网络异常，请检查您的网络连接是否正常!'
         }
     }
 }

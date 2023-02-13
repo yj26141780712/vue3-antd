@@ -100,7 +100,5 @@ onMounted(() => {
 
 }
 </style>
-<style>
 
-</style>
 

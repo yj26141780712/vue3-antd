@@ -25,11 +25,6 @@ const router = createRouter({
       ]
     },
     {
-      path: '/register',
-      name: 'register',
-      component: undefined
-    },
-    {
       path: '/recover',
       name: 'recover',
       component: undefined

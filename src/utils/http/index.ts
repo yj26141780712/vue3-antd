@@ -13,8 +13,9 @@ const defaultOption: RequestOptions = {
     successMessageMode: 'message'
 }
 
+
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_USE_MOCK ? import.meta.env.VITE_MOCK_DOMAIN_API : import.meta.env.VITE_DOMAIN_API
+    baseURL: import.meta.env.VITE_DOMAIN_API
 });
 
 instance.interceptors.request.use(function (config) {
@@ -45,12 +46,18 @@ const transformRequestHook = function (res: AxiosResponse<Result>, options: Requ
     }
     const { code, message } = data;
     if (code === ResultEnum.Ok) {
-        if (message && options.successMessageMode) {
-            createMessage.success('操作成功！');
+        if (message && options.errorMessageMode === 'modal') {
+
+        }
+        if (message && options.errorMessageMode === 'message') {
+            createMessage.success(message);
         }
         return data.data;
     } else {
-        if (message && options.errorMessageMode) {
+        if (message && options.errorMessageMode === 'modal') {
+
+        }
+        if (message && options.errorMessageMode === 'message') {
             createMessage.error(message);
         }
         throw new Error(message);
@@ -75,7 +82,6 @@ const request = async function <T = any>(conf: AxiosRequestConfig<any>, options?
         const res = await instance.request(conf);
         return await Promise.resolve(transformRequestHook(res, options));
     } catch (err) {
-        console.log(err);
         return await Promise.reject(err);
     }
 }
