@@ -14,7 +14,7 @@ const defaultOption: RequestOptions = {
 }
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_DOMAIN_API
+    baseURL: import.meta.env.VITE_USE_MOCK ? import.meta.env.VITE_MOCK_DOMAIN_API : import.meta.env.VITE_DOMAIN_API
 });
 
 instance.interceptors.request.use(function (config) {
