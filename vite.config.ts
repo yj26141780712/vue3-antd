@@ -21,7 +21,7 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
-        // 'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
+         'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
       }
     },
     css: {
