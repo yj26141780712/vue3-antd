@@ -7,7 +7,7 @@
                     <a-input v-model:value="formState.userName" type="text" :placeholder="$t('login.userName')"
                         size="large">
                         <template #prefix>
-                            <user-outlined :style="{ color: 'rgba(0,0,0,.25)' }" />
+                            <user-outlined class="prefixIcon" />
                         </template>
                     </a-input>
                 </a-form-item>
@@ -15,7 +15,7 @@
                     <a-input v-model:value="formState.password" :type="isShowPassword ? 'text' : 'password'"
                         autocomplete="off" :placeholder="$t('login.password')" size="large">
                         <template #prefix>
-                            <lock-outlined :style="{ color: 'rgba(0,0,0,.25)' }" />
+                            <lock-outlined class="prefixIcon" />
                         </template>
                         <template #suffix>
                             <eye-outlined v-if="isShowPassword" @click="isShowPassword = !isShowPassword" />
@@ -30,7 +30,7 @@
                     <a-input v-model:value="formState.mobile" type="text" :placeholder="$t('login.mobile')"
                         size="large">
                         <template #prefix>
-                            <mobile-outlined :style="{ color: 'rgba(0,0,0,.25)' }" />
+                            <mobile-outlined class="prefixIcon" />
                         </template>
                     </a-input>
                 </a-form-item>
@@ -40,7 +40,7 @@
                             <a-input v-model:value="formState.code" type="text" autocomplete="off"
                                 :placeholder="$t('login.code')" size="large">
                                 <template #prefix>
-                                    <mail-outlined :style="{ color: 'rgba(0,0,0,.25)' }" />
+                                    <mail-outlined class="prefixIcon" />
                                 </template>
                             </a-input>
                         </a-form-item>
@@ -63,7 +63,7 @@
         </a-form-item>
         <a-form-item>
             <router-link :to="{ name: 'register' }" class="forge-password" style="float: right;">{{
-                $t('login.register')
+                $t('login.registerUser')
             }}</router-link>
         </a-form-item>
     </a-form>
@@ -76,6 +76,7 @@ import type { FormInstance } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/es/form/interface';
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 interface FormState {
     userName: string;
@@ -98,6 +99,7 @@ const formState = reactive<FormState>({
 const { t } = useI18n();
 const { user } = useStore();
 const { createMessage, createErrorModal } = useMessage();
+const router = useRouter()
 
 const rules: Record<string, Rule[]> = reactive({
     userName: [{ required: true, message: t('login.userNameRequired') }],
@@ -124,7 +126,7 @@ const onSubmit = () => {
 const finish = async function () {
     try {
         const res = await user.login(formState, activeKey.value);
-        console.log(res);
+        router.push({ path: '/' })
         loading.value = false;
     } catch (err) {
         // createMessage.error(err.message || t('sys.api.networkExceptionMsg'));
@@ -137,3 +139,8 @@ const finishFailed = function () {
     loading.value = false;
 }
 </script>
+<style lang="less" scoped>
+.prefixIcon {
+    color: var(--ant-primary-color)
+}
+</style>

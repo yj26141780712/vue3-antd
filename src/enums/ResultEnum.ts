@@ -1,7 +1,8 @@
 export enum ResultEnum {
+    // 请求错误
     Ok = 200,
     Error = 500,
-    ErrorToken = 501,
-    ExpiredToken = 502,
+    ExpiredToken = 501,
+    ErrorToken = 502,
     RefreshTokenFail = 503,
 }

@@ -11,8 +11,12 @@ enum Api {
 export function loginApi(info: LoginParams, errorMessageMode: ErrorMessageMode = 'message') {
     return http.get<LoginResultModel>({
         url: 'account/loginByPassword', params: {
-            username: info.userName,
+            account: info.userName,
             password: info.password
         }
     }, { errorMessageMode });
+}
+
+export function getInfoApi() {
+    return http.get({ url: 'account/selfDetail' });
 }

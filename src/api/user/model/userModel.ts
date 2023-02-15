@@ -6,6 +6,6 @@ export interface LoginParams {
 }
 
 export interface LoginResultModel {
-    stoken: string;
-    ltoken: string;
+    token: string;
+    refreshToken?: string;
 }
