@@ -1,1 +1,35 @@
 @import 'ant-design-vue/dist/antd.variable.less';
+
+#app {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+
+
+body {
+    .basiclayout-content {
+        position: relative;
+        padding: 24px;
+    }
+
+    .ant-layout-header {
+        .header-main-left {
+            color: #fff;
+        }
+
+        .header-main-right .title {
+            color: #fff;
+        }
+
+        &.light {
+            .header-main-left {
+                color: var(--ant-primary-color);
+            }
+
+            .header-main-right .title {
+                color: rgba(0, 0, 0, 0.85);
+            }
+        }
+    }
+}

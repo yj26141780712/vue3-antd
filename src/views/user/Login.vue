@@ -7,7 +7,7 @@
                     <a-input v-model:value="formState.userName" type="text" :placeholder="$t('login.userName')"
                         size="large">
                         <template #prefix>
-                            <user-outlined class="prefixIcon" />
+                            <icon-font type="icon-user" class="prefixIcon" />
                         </template>
                     </a-input>
                 </a-form-item>
@@ -15,11 +15,12 @@
                     <a-input v-model:value="formState.password" :type="isShowPassword ? 'text' : 'password'"
                         autocomplete="off" :placeholder="$t('login.password')" size="large">
                         <template #prefix>
-                            <lock-outlined class="prefixIcon" />
+                            <icon-font type="icon-password" class="prefixIcon" />
                         </template>
                         <template #suffix>
-                            <eye-outlined v-if="isShowPassword" @click="isShowPassword = !isShowPassword" />
-                            <eye-invisible-outlined v-else="!isShowPassword"
+                            <icon-font type="icon-eye" v-if="isShowPassword"
+                                @click="isShowPassword = !isShowPassword" />
+                            <icon-font type="icon-eye-close" v-else="!isShowPassword"
                                 @click="isShowPassword = !isShowPassword" />
                         </template>
                     </a-input>
@@ -30,7 +31,7 @@
                     <a-input v-model:value="formState.mobile" type="text" :placeholder="$t('login.mobile')"
                         size="large">
                         <template #prefix>
-                            <mobile-outlined class="prefixIcon" />
+                            <icon-font type="icon-phone" class="prefixIcon"></icon-font>
                         </template>
                     </a-input>
                 </a-form-item>
@@ -40,7 +41,7 @@
                             <a-input v-model:value="formState.code" type="text" autocomplete="off"
                                 :placeholder="$t('login.code')" size="large">
                                 <template #prefix>
-                                    <mail-outlined class="prefixIcon" />
+                                    <icon-font type="icon-mail" class="prefixIcon"></icon-font>
                                 </template>
                             </a-input>
                         </a-form-item>
@@ -127,8 +128,7 @@ const finish = async function () {
         router.push({ path: '/' })
         loading.value = false;
     } catch (err) {
-        // createMessage.error(err.message || t('sys.api.networkExceptionMsg'));
-        createErrorModal({ content: err.message, iconType: 'error' })
+        createErrorModal({ content: err.message || t('sys.api.networkExceptionMsg'), iconType: 'error' })
         loading.value = false;
     }
 }

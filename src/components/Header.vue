@@ -1,45 +1,53 @@
 <template>
-    <a-layout-header v-if="fixedHeader" style="background-color: transparent;">头部</a-layout-header>
+    <a-layout-header v-if="fixedHeader" style="background-color: transparent;"
+        :style="{ height: '48px', 'line-height': '48px' }">头部</a-layout-header>
     <a-layout-header :class="{ 'fixed-header': fixedHeader, 'sider-header': siderHeader, light: isLight }" :style="{
-        'width': headerWidth, 'z-index': zIndex99 ? 99 : 10
+        'width': headerWidth, 'z-index': zIndex99 ? 99 : 10, height: '48px', 'line-height': '48px'
     }" style="padding: 0;">
         <div class="header-main">
             <div v-if="showHeaderLogo && !showHeadCollapsedButton" class="header-main-left">
-                <img class="eliga-logo" src="/pamfacloud/assets/images/eliga.png" alt="">
-                <span class="pamfa">.PAMFA</span>
-                <span>系统名称</span>
+                <img class="eliga-logo" src="@/assets/images/eliga.png" alt="">
+                <span>家庭体检系统</span>
             </div>
             <div v-if="showHeadCollapsedButton" class="header-collapsed-button" @click="toggleCollapsed()">
-                <menu-fold-outlined v-if="!isCollapsed" />
-                <menu-unfold-outlined v-if="isCollapsed" />
+                <icon-font type="icon-menu-fold"></icon-font>
             </div>
             <div class="header-main-center" style="flex: 1 1 0%;">
             </div>
             <div class="header-main-right">
-                <a-dropdown :trigger="'click'" class="user-dropmenu">
-                    <div>
-                        <a-avatar nzIcon="user" :src="''" :size="48">
+                <a-dropdown class="message-dropmenu">
+                    <span class="user-notice-button">
+                        <a-badge count="11">
+                            <icon-font type="icon-user" class="message-icon" />
+                        </a-badge>
+                    </span>
+                    <template #overlay>
+
+                    </template>
+                </a-dropdown>
+                <a-dropdown class="user-dropmenu">
+                    <span>
+                        <a-avatar nzIcon="user" :src="''" :size="32">
                         </a-avatar>
-                        <span>{{ info['name'] || '未知' }}</span>
-                    </div>
+                        <span class="title">{{ info['name'] || '未知' }}</span>
+                    </span>
                     <template #overlay>
                         <a-menu style="width: 160px;">
                             <a-menu-item class="user-dropmenu-item">
-                                <user-outlined />
+                                <icon-font type="icon-user"></icon-font>
                                 <span>个人设置</span>
                             </a-menu-item>
                             <a-menu-item class="user-dropmenu-item">
-                                <lock-outlined />
+                                <icon-font type="icon-password"></icon-font>
                                 <span>密码修改</span>
                             </a-menu-item>
                             <a-menu-item class="user-dropmenu-item" @click="showSetting">
-                                <setting-outlined />
+                                <icon-font type="icon-setting"></icon-font>
                                 <span>主题设置</span>
-
                             </a-menu-item>
                             <a-divider style="margin:4px 0"></a-divider>
-                            <a-menu-item class="user-dropmenu-item">
-                                <logout-outlined />
+                            <a-menu-item class="user-dropmenu-item" @click="logout">
+                                <icon-font type="icon-logout"></icon-font>
                                 <span>退出登录</span>
                             </a-menu-item>
                         </a-menu>
@@ -55,9 +63,12 @@
 import useStore from '@/stores';
 import { storeToRefs } from 'pinia';
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 const { theme, user } = useStore();
 const { isCollapsed, themeSetting, isLessMobileWidth } = storeToRefs(theme);
 const { info } = storeToRefs(user);
+const router = useRouter();
+
 const visible = ref(false);
 const fixedHeader = computed(() => {
     return themeSetting.value.fixedHeader;
@@ -87,7 +98,6 @@ const showHeaderLogo = computed(() => {
 });
 
 const isLight = computed(() => {
-
     return (themeSetting.value.currentTheme === 'light'
         && themeSetting.value.currentNavigationMode === 'sider') || (
             themeSetting.value.currentTheme === 'dark' &&
@@ -104,6 +114,10 @@ const afterVisibleChange = function () {
 }
 const showSetting = function () {
     visible.value = true;
+}
+const logout = function () {
+    console.log(123);
+    router.push('/user/login');
 }
 </script>
 <style lang="less" scoped>
@@ -123,6 +137,7 @@ const showSetting = function () {
     height: 100%;
     padding-left: 12px;
     // background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 
     &-left {
         min-width: 186px;
@@ -138,7 +153,7 @@ const showSetting = function () {
 
                 &+span {
                     font-weight: 600;
-                    font-size: 34px;
+                    font-size: 20px;
                     margin-left: 28px;
                 }
             }
@@ -193,7 +208,33 @@ const showSetting = function () {
     }
 }
 
+.user-notice-button {
+    padding: 0 12px;
+    height: 48px;
+    line-height: 48px;
+    display: inline-block;
+}
+
 .user-dropmenu {
+    padding: 0 12px;
+    line-height: 48px;
+    height: 48px;
+    display: inline-block;
+
+    &:after {
+        content: '';
+        width: 0;
+        height: 100%;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .title {
+        font-size: 16px;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+
     nz-avatar {
         margin: 8px 8px 8px 0;
         vertical-align: top;
@@ -204,5 +245,11 @@ const showSetting = function () {
             margin-right: 8px;
         }
     }
+}
+
+.message-icon {
+    padding: 4px;
+    font-size: 16px;
+    vertical-align: middle;
 }
 </style>

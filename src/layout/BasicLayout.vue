@@ -1,30 +1,27 @@
 <template>
-    <a-layout class="home-layout">
-        <Sider></Sider>
-        <a-layout>
-            <Header></Header>
-            <Tabs></Tabs>
-            <a-layout-content>
-                <div style="height:1000px;"></div>
-                <RouterView />
-            </a-layout-content>
-            <Footer></Footer>
+    <div style="position: relative;">
+        <a-layout class="home-layout">
+            <Sider></Sider>
+            <a-layout>
+                <Header></Header>
+                <Tabs></Tabs>
+                <a-layout-content class="basiclayout-content">
+                    <RouterView />
+                </a-layout-content>
+                <Footer></Footer>
+            </a-layout>
         </a-layout>
-    </a-layout>
-    <RouterView />
+    </div>
 </template>
 <script setup lang="ts">
 import useStore from '@/stores';
-import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 const { theme } = useStore();
-const { setThemeSetting } = theme;
-
-const isCollapsed = ref(false);
+const { isCollapsed } = storeToRefs(theme);
 
 
 const toggleCollapsed = function () {
     isCollapsed.value = !isCollapsed.value;
-    setThemeSetting();
 }
 
 
@@ -32,6 +29,7 @@ const toggleCollapsed = function () {
 </script>
 <style lang="less" scoped>
 .home-layout {
-    height: 100%;
+    min-height: 100vh;
+    width: 100%;
 }
 </style>

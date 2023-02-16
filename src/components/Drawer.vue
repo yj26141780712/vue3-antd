@@ -7,7 +7,7 @@
                     <a-tooltip v-for="style of themeStyles" :title="style">
                         <div class="ant-pro-checkbox-item" :class="['ant-pro-checkbox-item-' + style]"
                             @click="selectTheme(style)">
-                            <check-outlined v-if="themeSetting.currentTheme == style" />
+                            <icon-font type="icon-check" v-if="themeSetting.currentTheme == style" />
                         </div>
                     </a-tooltip>
                 </div>
@@ -18,7 +18,7 @@
                     <a-tooltip v-for="color of colors" :title="color.name">
                         <div :style="{ 'background-color': color.value }" class="theme-color-item"
                             @click="changeColor(color)">
-                            <check-outlined v-if="themeSetting.currentThemeColor == color.name" />
+                            <icon-font type="icon-check" v-if="themeSetting.currentThemeColor == color.name" />
                         </div>
                     </a-tooltip>
                 </div>
@@ -30,7 +30,7 @@
                     <a-tooltip v-for="mode of navigationModes" :title="mode">
                         <div class="ant-pro-checkbox-item" :class="['ant-pro-checkbox-item-' + mode + '-menu']"
                             a-tooltip @click="selectMode(mode)">
-                            <check-outlined v-if="themeSetting.currentNavigationMode == mode" />
+                            <icon-font type="icon-check" v-if="themeSetting.currentNavigationMode == mode" />
                         </div>
 
                     </a-tooltip>

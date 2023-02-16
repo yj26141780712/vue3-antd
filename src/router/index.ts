@@ -38,9 +38,15 @@ const router = createRouter({
   ]
 })
 
+
 router.beforeEach((to, from) => {
   const { user } = useStore();
   const { token, getRoleLength } = user;
+  const { staticRouter } = useStore();
+  const { addRouter } = staticRouter;
+  if (to.meta && to.meta.title) {
+    addRouter(to);
+  }
   if (token) {
     if (to.path.startsWith('/user')) { // 登录界面无需验证权限
 
@@ -53,6 +59,11 @@ router.beforeEach((to, from) => {
     }
   }
   return true
-})
+});
+
+
+
 
 export default router
+
+
