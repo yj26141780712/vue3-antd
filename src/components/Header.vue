@@ -1,6 +1,6 @@
 <template>
     <a-layout-header v-if="fixedHeader" style="background-color: transparent;">头部</a-layout-header>
-    <a-layout-header :class="{ 'fixed-header': fixedHeader, 'sider-header': siderHeader }" :style="{
+    <a-layout-header :class="{ 'fixed-header': fixedHeader, 'sider-header': siderHeader, light: isLight }" :style="{
         'width': headerWidth, 'z-index': zIndex99 ? 99 : 10
     }" style="padding: 0;">
         <div class="header-main">
@@ -59,18 +59,11 @@ const { theme, user } = useStore();
 const { isCollapsed, themeSetting, isLessMobileWidth } = storeToRefs(theme);
 const { info } = storeToRefs(user);
 const visible = ref(false);
-
-
 const fixedHeader = computed(() => {
     return themeSetting.value.fixedHeader;
 });
 
 const headerWidth = computed(() => {
-    console.log(themeSetting.value)
-    console.log((!isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider'
-        && fixedHeader.value)
-        ? `calc(100% - ${isCollapsed.value ? themeSetting.value.siderWidth : themeSetting.value.collapsedWidth}px)`
-        : '100%');
     return (!isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider'
         && fixedHeader.value)
         ? `calc(100% - ${isCollapsed.value ? themeSetting.value.siderWidth : themeSetting.value.collapsedWidth}px)`
@@ -80,6 +73,7 @@ const headerWidth = computed(() => {
 const siderHeader = computed(() => { // 手机模式不显示
     return !isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider';
 });
+
 const zIndex99 = computed(() => {
     return themeSetting.value.currentNavigationMode !== 'sider';
 });
@@ -91,6 +85,16 @@ const showHeadCollapsedButton = computed(() => {
 const showHeaderLogo = computed(() => {
     return themeSetting.value.currentNavigationMode !== 'sider'
 });
+
+const isLight = computed(() => {
+
+    return (themeSetting.value.currentTheme === 'light'
+        && themeSetting.value.currentNavigationMode === 'sider') || (
+            themeSetting.value.currentTheme === 'dark' &&
+            (themeSetting.value.currentNavigationMode === 'sider' ||
+                themeSetting.value.currentNavigationMode === 'mixin')
+        );
+})
 
 const toggleCollapsed = function () {
 
@@ -110,11 +114,15 @@ const showSetting = function () {
     z-index: 1;
 }
 
+.light {
+    background-color: #fff;
+}
+
 .header-main {
     display: flex;
     height: 100%;
     padding-left: 12px;
-
+    // background-color: #fff;
 
     &-left {
         min-width: 186px;

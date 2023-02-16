@@ -29,8 +29,11 @@ export const changeColorStyle = (style: string) => {
     head.appendChild(styleDom);
 };
 
+const modules = import.meta.glob("../../assets/styles/colors/*.less", { "query": "?inline" });
+
 export const changeThemeColor = async (theme: ThemeColor = 'blue') => {
-    changeColorStyle((await import(`../../assets/styles/colors/${theme}.less?inline`)).default)
+    const res = await modules[`../../assets/styles/colors/${theme}.less`]();
+    changeColorStyle((res as any).default)
 };
 
 

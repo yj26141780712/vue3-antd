@@ -5,7 +5,7 @@
                 <h3 class="ant-pro-setting-drawer-title">整体风格设置</h3>
                 <div class="ant-pro-setting-drawer-block-checbox">
                     <a-tooltip v-for="style of themeStyles" :title="style">
-                        <div class="ant-pro-checkbox-item" :class="['ant-pro-checkbox-item-' + theme]"
+                        <div class="ant-pro-checkbox-item" :class="['ant-pro-checkbox-item-' + style]"
                             @click="selectTheme(style)">
                             <check-outlined v-if="themeSetting.currentTheme == style" />
                         </div>
@@ -18,7 +18,7 @@
                     <a-tooltip v-for="color of colors" :title="color.name">
                         <div :style="{ 'background-color': color.value }" class="theme-color-item"
                             @click="changeColor(color)">
-                            <check-outlined v-if="color.name == color.name" />
+                            <check-outlined v-if="themeSetting.currentThemeColor == color.name" />
                         </div>
                     </a-tooltip>
                 </div>
@@ -157,12 +157,11 @@ const changeColor = function (color: ColorType) {
     &-dark {
         &::before {
             background-color: #001529;
-
+            z-index: 1;
         }
 
         &::after {
             background-color: #fff;
-            z-index: 1;
         }
     }
 
