@@ -7,6 +7,11 @@
 
 <script setup lang="ts">
 </script>
+<script>
+ export default {
+    name:'company'
+ }
+</script>
 <style lang="less" scoped>
 
 </style>

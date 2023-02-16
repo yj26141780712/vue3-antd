@@ -9,9 +9,9 @@
                 <a-dropdown :trigger="['contextmenu']">
                     <span class="tab">
                         <span>
-                            {{ tab.title }}
+                            {{ tab.meta.title }}
                         </span>
-                        <icon-font type="icon-reload"></icon-font>
+                        <icon-font v-if="activeKey==tab.path" type="icon-reload" ref="iconRef" @click="refresh(tab)"></icon-font>
                         <icon-font type="icon-close"></icon-font>
                     </span>
                     <template #overlay>
@@ -45,14 +45,14 @@
 <script setup lang="ts">
 import useStore from '@/stores';
 import { storeToRefs } from 'pinia';
-import { computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, nextTick, ref } from 'vue';
+import { useRouter, type RouteLocationNormalized } from 'vue-router';
+import gsap from 'gsap';
 const { theme, staticRouter } = useStore();
 const { themeSetting, isCollapsed } = storeToRefs(theme);
-const { selectedRouterList: tabs, activePath: activeKey } = storeToRefs(staticRouter);
+const { selectedRouterList: tabs, activePath: activeKey,refreshing,keepNames } = storeToRefs(staticRouter);
 const router = useRouter();
-
-
+const iconRef = ref(null);
 
 const showManyTabs = computed(() => {
     return themeSetting.value.showManytabs;
@@ -71,6 +71,18 @@ const manyTabsWidth = computed(() => {
 
 const tabChange = () => {
     router.push(activeKey.value);
+}
+
+const refresh = (tab:RouteLocationNormalized)=>{
+    console.log(tab);
+    console.log(iconRef.value);
+    keepNames.value = [...keepNames.value.filter(x=>x!==tab.name)];
+    refreshing.value = true;
+    gsap.fromTo(iconRef.value[0],{rotate:0},{duration:1, rotate:360 })
+    nextTick(()=>{
+        keepNames.value.push(tab.name as string);
+        refreshing.value = false;    
+    });
 }
 
 </script>
@@ -114,5 +126,18 @@ const tabChange = () => {
     font-size: 16px;
     padding: 12px;
     margin-left: 8px;
+}
+
+.icon-refreshing {
+    animation: circle 1.5s ;
+    transform: rotate(0);
+}
+@keyframes circle {
+    0%{
+        transform: rotate(0);
+    }
+    100%{
+        transform: rotate(360deg);
+    }   
 }
 </style>

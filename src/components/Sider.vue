@@ -81,7 +81,7 @@ const list: MenuItem[] = [
             { id: 41, key: '41', title: '公司管理', url: '/system/company' },
             { id: 42, key: '42', title: '菜单管理', url: '/system/menu' },
             { id: 43, key: '43', title: '角色管理', url: '/system/role' },
-            { id: 44, key: '44', title: '账户管理', url: '/system/user' },
+            { id: 44, key: '44', title: '账户管理', url: '/system/account' },
         ]
     }
 ];

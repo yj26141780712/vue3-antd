@@ -24,13 +24,13 @@ export const asyncRouter: readonly RouteRecordRaw[] = [
                 component: PageView,
                 children: [
                     {
-                        path: 'company', name: 'systemCompany',
+                        path: 'company', name: 'company',
                         meta: { title: '公司管理', keepAlive: false },
                         component: () => import('@/views/system/Company.vue')
                     },
-                    { path: 'menu', name: 'systemMenu', meta: { title: '菜单管理', keepAlive: true }, component: () => import('@/views/system/Menu.vue') },
-                    { path: 'role', name: 'systemRole', meta: { title: '角色管理', keepAlive: true }, component: () => import('@/views/system/Role.vue') },
-                    { path: 'user', name: 'systemUser', meta: { title: '用户管理', keepAlive: true }, component: () => import('@/views/system/User.vue') }
+                    { path: 'menu', name: 'menu', meta: { title: '菜单管理', keepAlive: true }, component: () => import('@/views/system/Menu.vue') },
+                    { path: 'role', name: 'role', meta: { title: '角色管理', keepAlive: true }, component: () => import('@/views/system/Role.vue') },
+                    { path: 'account', name: 'account', meta: { title: '用户管理', keepAlive: true }, component: () => import('@/views/system/User.vue') }
                 ]
             }
         ]

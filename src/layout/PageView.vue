@@ -1,13 +1,7 @@
 <template>
     <div class="test">
-        <!-- <transition>
-            <keep-alive>
-                <RouterView />
-            </keep-alive>
-        </transition> -->
         <router-view v-slot="{ Component, route }">
-            <div>{{ route.fullPath }} {{ route.name }}</div>
-            <keep-alive :include="['systemCompany', 'company']">
+            <keep-alive v-if="!refreshing" :include="keepNames">
                 <component :is="Component" />
             </keep-alive>
         </router-view>
@@ -15,6 +9,10 @@
 </template>
 
 <script setup lang="ts">
+import useStore from '@/stores';
+import { storeToRefs } from 'pinia';
+const { staticRouter } = useStore();
+const { keepNames,refreshing } = storeToRefs(staticRouter);
 </script>
 <style lang="less" scoped>
 

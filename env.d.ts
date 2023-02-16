@@ -9,3 +9,5 @@ declare module "*.vue" {
 
 
 declare module '@zougt/vite-plugin-theme-preprocessor';
+
+declare module 'gsap';
