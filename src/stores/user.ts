@@ -31,7 +31,7 @@ export const useUserStore = defineStore('user', () => {
     }
     const getInfo = async function () {
         const res = await getInfoApi();
-        console.log(res);
+
     }
     return { token, info, getRoleLength, login };
 })

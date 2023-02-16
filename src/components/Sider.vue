@@ -1,11 +1,11 @@
 <template>
     <!--侧边栏-->
     <div v-if="fixedSider" class="fixed-sider-stuff"
-        :style="{ width: isCollapsed ? collapsedWidth : siderWidth + 'px' }">
+        :style="{ width: isCollapsed ? themeSetting.collapsedWidth : themeSetting.siderWidth + 'px' }">
     </div>
     <a-layout-sider v-if="showSider" :theme="menuTheme" :class="{ 'fixed-sider': fixedSider }" collapsible
-        v-model:collapsed="isCollapsed" :trigger="null" :width="siderWidth" :collapsedWidth="collapsedWidth"
-        :style="{ paddingTop: showSiderLogo ? 0 : 64 + 'px' }">
+        v-model:collapsed="isCollapsed" :trigger="null" :width="themeSetting.siderWidth"
+        :collapsedWidth="themeSetting.collapsedWidth" :style="{ paddingTop: showSiderLogo ? 0 : 64 + 'px' }">
         <div v-if="showSiderLogo" class="sider-logo">
             <div class="logo">
                 <img class="eliga-logo" src="/pamfacloud/assets/images/eliga.png" alt="">
@@ -31,8 +31,7 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 const { theme } = useStore();
 const { themeSetting, isCollapsed, isLessMobileWidth } = storeToRefs(theme);
-const collapsedWidth = 48;
-const siderWidth = 200;
+
 const fixedSider = computed(() => {
     return themeSetting.value.fixedSidebar;
 });

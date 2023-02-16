@@ -42,30 +42,8 @@ export interface ThemeSetting {
     fixedSidebar?: boolean;
     showManytabs?: boolean;
     fixedManytabs?: boolean;
-}
-
-
-
-export const getDefaultHomeSetting = function (): HomeSettings {
-    return {
-        menuTheme: 'light',
-        collapsedWidth: 48,
-        siderWidth: 200,
-        headerWidth: '100%',
-        siderHeader: true,
-        showSider: true,
-        fixedSider: true,
-        showHeadCollapsedButton: false,
-        fixedHeader: true,
-        showManyTabs: false,
-        fixedManyTabs: false,
-        showSiderLogo: true,
-        manyTabsWidth: '100%',
-        showHeaderLogo: true,
-        showHeaderMenu: false,
-        zIndex99: false,
-        showDrawerMenu: false
-    }
+    siderWidth?: number;
+    collapsedWidth?: number;
 }
 
 export const getDefaultThemeSetting = function (): ThemeSetting {
@@ -76,6 +54,8 @@ export const getDefaultThemeSetting = function (): ThemeSetting {
         fixedHeader: true,
         fixedSidebar: true,
         showManytabs: true,
-        fixedManytabs: true
+        fixedManytabs: true,
+        siderWidth: 200,
+        collapsedWidth: 48
     }
 }

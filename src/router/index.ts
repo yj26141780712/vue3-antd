@@ -41,7 +41,6 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const { user } = useStore();
   const { token, getRoleLength } = user;
-  console.log(token);
   if (token) {
     if (to.path.startsWith('/user')) { // 登录界面无需验证权限
 

@@ -6,7 +6,6 @@ import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  console.log(command, mode);
   const env = loadEnv(mode, process.cwd(), '');
   return {
     base: '/eliga/',

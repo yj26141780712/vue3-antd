@@ -35,10 +35,7 @@ const { app } = userStore()
 const { isMobile } = storeToRefs(app);
 
 onMounted(() => {
-    setTimeout(() => {
-        console.log('setTimeout');
-        isMobile.value = true;
-    }, 10000)
+
 })
 
 </script>

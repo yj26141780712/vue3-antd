@@ -66,8 +66,15 @@ const fixedHeader = computed(() => {
 });
 
 const headerWidth = computed(() => {
-    return !isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider'
-        && fixedHeader.value ? `calc(100% - ${isCollapsed ? 200 : 48}px)` : '100%'
+    console.log(themeSetting.value)
+    console.log((!isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider'
+        && fixedHeader.value)
+        ? `calc(100% - ${isCollapsed.value ? themeSetting.value.siderWidth : themeSetting.value.collapsedWidth}px)`
+        : '100%');
+    return (!isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider'
+        && fixedHeader.value)
+        ? `calc(100% - ${isCollapsed.value ? themeSetting.value.siderWidth : themeSetting.value.collapsedWidth}px)`
+        : '100%'
 })
 
 const siderHeader = computed(() => { // 手机模式不显示

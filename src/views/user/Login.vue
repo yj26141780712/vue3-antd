@@ -115,9 +115,7 @@ const tabsChange = () => {
     rules.code[0].required = activeKey.value === LoginType.CodeLogin;
 }
 const onSubmit = () => {
-    console.log('handleSubmit');
-    console.log(activeKey);
-    console.log(rules);
+
     loading.value = true;
 }
 

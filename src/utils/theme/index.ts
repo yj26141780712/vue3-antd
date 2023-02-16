@@ -21,7 +21,6 @@ export const getThemeColors = () => {
 }
 
 export const changeColorStyle = (style: string) => {
-    console.log(style)
     const head = document.head;
     document.getElementById("theme")?.remove();
     const styleDom = document.createElement("style");
@@ -31,7 +30,6 @@ export const changeColorStyle = (style: string) => {
 };
 
 export const changeThemeColor = async (theme: ThemeColor = 'blue') => {
-    console.log(theme);
     changeColorStyle((await import(`../../assets/styles/colors/${theme}.less?inline`)).default)
 };
 
