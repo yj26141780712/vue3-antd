@@ -1,5 +1,4 @@
 <template>
-    <!--侧边栏-->
     <div v-if="fixedSider" class="fixed-sider-stuff"
         :style="{ width: isCollapsed ? themeSetting.collapsedWidth : themeSetting.siderWidth + 'px' }">
     </div>
@@ -20,7 +19,7 @@
                 v-model:selectedKeys="selectedKeys" @select="select">
                 <template v-for="item in list" :key="item.key">
                     <template v-if="!item.children">
-                        <a-menu-item :key="item.key">
+                        <a-menu-item :key="item.key" :url="item.url">
                             <template v-if="item.icon" #icon>
                                 <icon-font :type="item.icon" />
                             </template>
@@ -34,7 +33,7 @@
             </a-menu>
         </div>
         <div class="sider-links" @click="toggleCollapsed">
-            <icon-font type="icon-menu-fold"></icon-font>
+            <icon-font type="icon-menu-fold" :class="{ 'reverse': isCollapsed }"></icon-font>
         </div>
     </a-layout-sider>
 </template>
@@ -54,7 +53,7 @@ const selectedKeys = ref([]);
 
 const list: MenuItem[] = [
     {
-        id: 0, key: '0', title: '主页', icon: 'icon-user',
+        id: 0, key: '0', title: '主页', icon: 'icon-user', url: '/home'
     },
     {
         id: 1, key: '1', title: '销售管理', icon: 'icon-user',
@@ -115,5 +114,18 @@ const toggleCollapsed = function () {
     left: 0;
     z-index: 11;
     height: 100%;
+}
+
+.sider-links {
+    padding-left: 14px;
+    height: 40px;
+    line-height: 40px;
+    margin: 4px 0;
+    cursor: pointer;
+    font-size: 20px;
+
+    .reverse {
+        transform: rotate(180deg);
+    }
 }
 </style>

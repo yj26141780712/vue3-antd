@@ -1,5 +1,6 @@
 
 import { useAppStore } from "./app"
+import { useCompanyStore } from "./company"
 import { useCounterStore } from "./counter"
 import { useStaticRouterStore } from "./staticRouter"
 import { useThemeStore } from "./theme"
@@ -11,6 +12,7 @@ export default function useStore() {
         counter: useCounterStore(),
         user: useUserStore(),
         theme: useThemeStore(),
-        staticRouter: useStaticRouterStore()
+        staticRouter: useStaticRouterStore(),
+        company: useCompanyStore()
     }
 }

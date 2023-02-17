@@ -9,7 +9,7 @@ const app = createApp(App)
 
 
 const IconFont = createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/c/font_3227979_xlmv057xiq.js',
+    scriptUrl: '//at.alicdn.com/t/c/font_3227979_qsanj5kc58.js',
 });
 
 app.component('IconFont', IconFont)

@@ -4,15 +4,16 @@
     </div>
     <a-tabs v-if="showManyTabs" class="home-multi-tabs" :class="{ 'fixed-tabs': fixedManyTabs }"
         :style="{ width: manyTabsWidth }" :type="'card'" v-model:activeKey="activeKey" @change="tabChange">
-        <a-tab-pane v-for="tab in tabs" :key="tab.path">
+        <a-tab-pane v-for="(tab, index) in tabs" :key="tab.path">
             <template #tab>
                 <a-dropdown :trigger="['contextmenu']">
                     <span class="tab">
                         <span>
                             {{ tab.meta.title }}
                         </span>
-                        <icon-font v-if="activeKey==tab.path" type="icon-reload" ref="iconRef" @click="refresh(tab)"></icon-font>
-                        <icon-font type="icon-close"></icon-font>
+                        <icon-font v-if="activeKey == tab.path" type="icon-reload" ref="iconRef"
+                            @click.stop="refreshPage(tab)"></icon-font>
+                        <icon-font v-if="showClose" type="icon-close" @click.stop="closePage(tab, index)"></icon-font>
                     </span>
                     <template #overlay>
                         <a-menu>
@@ -50,7 +51,7 @@ import { useRouter, type RouteLocationNormalized } from 'vue-router';
 import gsap from 'gsap';
 const { theme, staticRouter } = useStore();
 const { themeSetting, isCollapsed } = storeToRefs(theme);
-const { selectedRouterList: tabs, activePath: activeKey,refreshing,keepNames } = storeToRefs(staticRouter);
+const { selectedRouterList: tabs, activePath: activeKey, refreshing, keepNames } = storeToRefs(staticRouter);
 const router = useRouter();
 const iconRef = ref(null);
 
@@ -64,25 +65,38 @@ const fixedManyTabs = computed(() => {
 
 const manyTabsWidth = computed(() => {
     return (themeSetting.value.currentNavigationMode === 'sider'
-        || themeSetting.value.currentNavigationMode === 'mixin') ? `calc(100% - ${isCollapsed ? themeSetting.value.siderWidth :
+        || themeSetting.value.currentNavigationMode === 'mixin') ? `calc(100% - ${!isCollapsed.value ? themeSetting.value.siderWidth :
             themeSetting.value.collapsedWidth
         }px)` : '100%';
 });
+
+const showClose = computed(() => {
+    return tabs.value.length > 1;
+})
 
 const tabChange = () => {
     router.push(activeKey.value);
 }
 
-const refresh = (tab:RouteLocationNormalized)=>{
-    console.log(tab);
-    console.log(iconRef.value);
-    keepNames.value = [...keepNames.value.filter(x=>x!==tab.name)];
+const refreshPage = (tab: RouteLocationNormalized) => {
+    keepNames.value = [...keepNames.value.filter(x => x !== tab.name)];
     refreshing.value = true;
-    gsap.fromTo(iconRef.value[0],{rotate:0},{duration:1, rotate:360 })
-    nextTick(()=>{
+    gsap.fromTo(iconRef.value[0], { rotate: 0 }, { duration: 1, rotate: 360 })
+    nextTick(() => {
         keepNames.value.push(tab.name as string);
-        refreshing.value = false;    
+        refreshing.value = false;
+        console.log(keepNames.value)
     });
+}
+
+const closePage = (tab: RouteLocationNormalized, index: number) => {
+    keepNames.value = [...keepNames.value.filter(x => x !== tab.name)];
+    const deleteTab = tabs.value.splice(index, 1);
+    if (deleteTab[0].path === activeKey.value) {
+        const activeIndex = index === 0 ? 0 : index - 1;
+        activeKey.value = tabs.value[activeIndex].path;
+        router.push(activeKey.value);
+    }
 }
 
 </script>
@@ -126,18 +140,5 @@ const refresh = (tab:RouteLocationNormalized)=>{
     font-size: 16px;
     padding: 12px;
     margin-left: 8px;
-}
-
-.icon-refreshing {
-    animation: circle 1.5s ;
-    transform: rotate(0);
-}
-@keyframes circle {
-    0%{
-        transform: rotate(0);
-    }
-    100%{
-        transform: rotate(360deg);
-    }   
 }
 </style>

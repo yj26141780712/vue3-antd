@@ -3,8 +3,14 @@ import type { RequestOptions, Result } from '@/types/axios';
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import i18n from '@/locals';
 import { useMessage } from '@/hooks/web/useMessage';
+import { getToken } from '../cache';
 
-const { createMessage } = useMessage();
+// 是否正在刷新的标记
+let isRefreshing = false
+// 重试队列，每一项将是一个待执行的函数形式
+let requests = []
+
+const { createMessage, createErrorModal, createSuccessModal } = useMessage();
 
 const defaultOption: RequestOptions = {
     isReturnNativeResponse: false,
@@ -19,16 +25,55 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(function (config) {
+    const token = getToken();
+    if (token) {
+        config.headers['token'] = token;
+    }
     return config;
 }, function (error) {
     return Promise.reject(error);
 })
 
-instance.interceptors.response.use(function (response) {
+instance.interceptors.response.use(async (response: AxiosResponse<Result>) => {
+    const { code } = response.data;
+    if (code === ResultEnum.ErrorToken || code === ResultEnum.ExpiredToken) {
+        //token无效 拦截重新刷新token
+        const config = response.config;
+        if (!isRefreshing) {
+            try {
+                isRefreshing = true;
+                const res = await refreshToken();
+                const { token } = res.data;
+                //设置token;
+                config.headers['token'] = token;
+                requests.forEach(cb => cb(token))
+                // 重试完了别忘了清空这个队列
+                requests = []
+                return await instance(config);
+            } catch (err) {
+                console.log('刷新token失败', err);
+                window.location.href = '/eliga/user/login';
+            } finally {
+                isRefreshing = false;
+            }
+        } else {
+            return new Promise((resolve) => {
+                requests.push((token: string) => {
+                    config.headers['token'] = token
+                    resolve(instance(config))
+                });
+            })
+        }
+    }
     return response;
 }, function (error) {
     return Promise.reject(error);
 })
+
+const refreshToken = async function () {
+    const res = await get({ url: '/refreshtoken' });
+    return res.data;
+}
 
 const transformRequestHook = function (res: AxiosResponse<Result>, options: RequestOptions) {
     const { t } = i18n.global;
@@ -45,16 +90,16 @@ const transformRequestHook = function (res: AxiosResponse<Result>, options: Requ
     }
     const { code, message } = data;
     if (code === ResultEnum.Ok) {
-        if (message && options.errorMessageMode === 'modal') {
-
+        if (message && options.successMessageMode === 'modal') {
+            createSuccessModal({ content: message });
         }
-        if (message && options.errorMessageMode === 'message') {
+        if (message && options.successMessageMode === 'message') {
             createMessage.success(message);
         }
         return data.data;
     } else {
         if (message && options.errorMessageMode === 'modal') {
-
+            createErrorModal({ content: message });
         }
         if (message && options.errorMessageMode === 'message') {
             createMessage.error(message);

@@ -32,4 +32,108 @@ body {
             }
         }
     }
+
+    .ant-layout-sider .ant-layout-sider-children {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+    }
+}
+
+.page-container {
+    height: 100%;
+    background-color: #fff;
+}
+
+
+.page-container {
+    .table-search {
+        background-color: #fff;
+        padding: 24px 24px 0;
+
+        &+.table-body {
+            padding-top: 0px;
+        }
+    }
+
+    .table-body {
+        background-color: #fff;
+        padding: 12px 24px;
+
+    }
+
+    .table-tool {
+        height: 52px;
+    }
+}
+
+.table-tool {
+    display: flex;
+    justify-content: space-between;
+    height: 48px;
+
+    &-left {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    &-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    &-setting-item {
+        margin-left: 16px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        margin-right: 10px;
+        min-width: 100px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+}
+
+.table-body {
+
+    .disabled,
+    .disabled:hover,
+    .disabled:focus,
+    .disabled:active {
+        color: #00000040;
+        cursor: not-allowed;
+    }
+}
+
+
+
+.table-popover {
+    .ant-popover-inner-content {
+        padding: 0;
+    }
+
+    .ant-menu {
+        padding: 4px 0;
+    }
+
+    .ant-menu-item {
+        height: 32px;
+        line-height: 32px;
+
+    }
+
+    .ant-menu-vertical .ant-menu-item {
+        margin: 0;
+    }
+
+    .ant-menu-vertical .ant-menu-item:not(:last-child) {
+        margin-bottom: 0;
+    }
 }

@@ -9,6 +9,8 @@ declare type ModalIconType = 'warning' | 'success' | 'error' | 'info'
 declare type ModalOptionsEx = { iconType: ModalIconType }
     & Omit<ModalFuncProps, 'iconType'>
 
+export type ModalOptionsPartial = Partial<ModalOptionsEx> & Pick<ModalOptionsEx, 'content'>;
+
 const renderContent = function ({ content }: Pick<ModalOptionsEx, 'content'>) {
     try {
         if (isString(content)) {
@@ -60,19 +62,19 @@ function createModalOptions(options: ModalFuncProps, icon: ModalIconType): Modal
     };
 }
 
-const createSuccessModal = function (props: ModalOptionsEx) {
+const createSuccessModal = function (props: ModalOptionsPartial) {
     return Modal.success(createModalOptions(props, 'success'));
 }
 
-const createErrorModal = function (props: ModalOptionsEx) {
+const createErrorModal = function (props: ModalOptionsPartial) {
     return Modal.error(createModalOptions(props, 'error'));
 }
 
-const createInfoModal = function (props: ModalOptionsEx) {
+const createInfoModal = function (props: ModalOptionsPartial) {
     return Modal.error(createModalOptions(props, 'info'));
 }
 
-const createWarningModal = function (props: ModalOptionsEx) {
+const createWarningModal = function (props: ModalOptionsPartial) {
     return Modal.error(createModalOptions(props, 'warning'));
 }
 

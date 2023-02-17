@@ -4,7 +4,8 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({
+    name: 'SystemMenu',
+});
 </script>
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>

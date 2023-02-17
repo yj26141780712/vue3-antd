@@ -16,11 +16,14 @@
     "module": "esnext",
     "strict": false,
     "jsx": "preserve",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": [
+      "unplugin-vue-define-options/macros-global"
+    ]
   },
   "references": [
     {
       "path": "./tsconfig.config.json"
     }
-  ]
+  ],
 }

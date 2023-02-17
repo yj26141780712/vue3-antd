@@ -29,9 +29,6 @@ export const useUserStore = defineStore('user', () => {
             refreshToken.value = res.refreshToken;
         }
     }
-    const getInfo = async function () {
-        const res = await getInfoApi();
-
-    }
-    return { token, info, getRoleLength, login };
+    const getToken = computed(() => token.value);
+    return { token, info, getRoleLength, getToken, login };
 })
