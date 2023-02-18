@@ -1,18 +1,18 @@
 <template>
-    <BaseList :columns="columns" @reload="reload">
+    <BaseList :columns="columns" :dataSrouce="dataSrouce" @reload="reload">
         <template #search>
-            <a-form>
+            <a-form :model="formState">
                 <a-row :gutter="[16, 16]">
                     <a-col :xs="24" :sm="24" :md="12" :lg="6">
-                        <a-form-item :label="'关键字1'">
-                            <a-input></a-input>
+                        <a-form-item :label="'公司名称'">
+                            <a-input v-model="formState.companyName"></a-input>
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24" :sm="24" :md="12" :lg="6">
                         <a-form-item>
                             <a-space>
-                                <a-button type="primary">搜索</a-button>
-                                <a-button type="primary">重置</a-button>
+                                <a-button type="primary" @click="search">搜索</a-button>
+                                <a-button type="primary" @click="reset">重置</a-button>
                             </a-space>
                         </a-form-item>
                     </a-col>
@@ -22,27 +22,32 @@
         <template #button>
             <a-button type="primary">新增</a-button>
         </template>
-        <!-- <template #table>
-                                                    <a-table :columns="[]" :data-source="[]">
-
-                                                    </a-table>
-                                                </template> -->
     </BaseList>
 </template>
 
 <script setup lang="ts">
 import { getCompanyListApi } from '@/api/system';
+import type { CompanyModel } from '@/api/system/model/company';
 import useStore from '@/stores';
 import type { ColumnType } from 'ant-design-vue/lib/table';
 import { reactive, onMounted } from 'vue';
 
+interface FormState {
+  companyName: string;
+}
+
 defineOptions({
     name: 'SystemCompany',
 });
+
+const formState = reactive<FormState>({
+    companyName:''
+})
+
 let columns = reactive<ColumnType[]>([{
     title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'companyName',
+    key: 'companyName',
 },
 {
     title: 'Age',
@@ -63,20 +68,36 @@ let columns = reactive<ColumnType[]>([{
     title: 'Action',
     key: 'action',
 }]);
+let dataSrouce = reactive<CompanyModel[]>([
+    { companyName:'1' },
+    { companyName:'2'},
+])
+
 const { company } = useStore();
 
 onMounted(async () => {
-    const res = await getCompanyListApi({
-        companyName: 'tet',
-    });
-    setTimeout(() => {
-        columns = [];
-        console.log(123);
-    }, 1000)
+    // const res = await getCompanyListApi({
+    //     companyName: 'tet',
+    // });
 })
+
+const search = ()=>{
+
+}
+
+const reset = ()=>{
+
+}
 
 const reload = () => {
     console.log('刷新表格！')
 }
+
+async function  loadData () {
+    const res = await getCompanyListApi({
+        companyName: 'tet',
+    });
+}
+
 </script>
 <style lang="less" scoped></style>

@@ -6,3 +6,10 @@
 
 // }
 
+export interface BaseTableColumn {
+    title: string;
+    dataIndex: string;
+    key: string;
+    width?: number;
+    checked: boolean;
+}

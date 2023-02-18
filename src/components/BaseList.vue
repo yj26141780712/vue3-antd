@@ -45,7 +45,7 @@
                                             </a-checkbox>
                                         </a-menu-item>
                                         <a-divider style="margin: 4px 0;"></a-divider>
-                                        <a-menu-item v-for="(item) in checkedList">
+                                        <a-menu-item v-for="(item) in checkedList" :key="item.key">
                                             <a-checkbox v-model:checked="item.checked">{{
                                                 item.title
                                             }}</a-checkbox>
@@ -71,7 +71,7 @@
             </div>
             <div class="table-warpper">
                 <slot v-if="customTable" name="table"></slot>
-                <a-table :columns="columns" :data-source="[]">
+                <a-table :columns="selectedColumns" :data-source="dataSrouce">
 
                 </a-table>
             </div>
@@ -80,7 +80,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, computed } from 'vue';
+import type { BaseTableColumn } from '@/types/table';
+import { onMounted, reactive, ref, computed, watch } from 'vue';
 const props = defineProps({
     customTable: {
         type: Boolean,
@@ -88,25 +89,35 @@ const props = defineProps({
     },
     columns: {
         type: Array,
+        default: ():BaseTableColumn[] => []
+    },
+    dataSrouce:{
+        type: Array,
         default: () => []
     }
 })
 
 const selectedColumns = computed(() => {
-    return props.columns.filter(x =>)
+     return checkedList.filter(x=>x.checked);
 });
 
 const emit = defineEmits(['reload'])
 const indeterminate = ref(false);
 const checkAll = ref(true);
 
-let checkedList = reactive<{ title: string, key: string, checked: boolean }[]>([...props.columns.map((x: any) => {
-    return { title: x.title as string, key: x.key, checked: true };
-})]);
+let checkedList = reactive<BaseTableColumn[]>(
+    [...props.columns.map((x: any) => Object.assign({},x,{checked:true}))]);
 
 const onCheckAllChange = () => {
 
 }
+
+
+watch(()=>props.columns,(val)=>{
+    checkedList = [...val.map((x: any) => Object.assign({},x,{checked:true}))]
+})
+
+
 
 </script>
 <style lang="less" scoped></style>
