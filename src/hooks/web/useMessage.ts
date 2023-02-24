@@ -40,12 +40,12 @@ const getBaseOptions = () => {
     const { t } = i18n.global;
     return {
         okText: t('common.okText'),
-        centered: true,
+        // centered: true,
     };
 };
 
 const createConfirm = function (props: ModalOptionsEx) {
-    Modal.success({
+    Modal.confirm({
         ...props,
         ...getBaseOptions(),
         icon: getIcon(props.iconType),

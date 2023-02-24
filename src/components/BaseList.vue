@@ -1,9 +1,9 @@
 <template>
     <div class="page-container">
-        <div class="table-search">
+        <div v-if="showSearch" class="table-search">
             <slot name="search"></slot>
         </div>
-        <div class="table-body">
+        <div class="table-body" ref="baseTable">
             <div class="table-tool">
                 <div class="table-tool-left">
                     <slot name="button"></slot>
@@ -12,20 +12,21 @@
                     <div class="table-tool-setting-item">
                         <a-tooltip>
                             <template #title>刷新</template>
-                            <icon-font type="icon-reload" @click="emit('reload')"></icon-font>
+                            <icon-font type="icon-reload" @click="reload"></icon-font>
                         </a-tooltip>
 
                     </div>
                     <div class="table-tool-setting-item">
                         <a-tooltip>
                             <template #title>密度</template>
-                            <a-popover placement="bottomRight" :trigger="'click'">
+                            <a-popover v-model:visible="sizeShow" placement="bottomRight" :trigger="'click'"
+                                :overlayClassName="'table-popover'">
                                 <icon-font type="icon-column-height"></icon-font>
                                 <template #content>
                                     <a-menu style="width: 80px;">
-                                        <a-menu-item>默认</a-menu-item>
-                                        <a-menu-item>中等</a-menu-item>
-                                        <a-menu-item>紧凑</a-menu-item>
+                                        <a-menu-item key="'default'" @click="selectSize('default')">默认</a-menu-item>
+                                        <a-menu-item key="'middle'" @click="selectSize('middle')">中等</a-menu-item>
+                                        <a-menu-item key="'small'" @click="selectSize('small')">紧凑</a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-popover>
@@ -45,8 +46,8 @@
                                             </a-checkbox>
                                         </a-menu-item>
                                         <a-divider style="margin: 4px 0;"></a-divider>
-                                        <a-menu-item v-for="(item) in checkedList" :key="item.key">
-                                            <a-checkbox v-model:checked="item.checked">{{
+                                        <a-menu-item v-for="(item) in checkedColumnKeys" :key="item.key">
+                                            <a-checkbox v-model:checked="item.checked" @change="onCheckChange">{{
                                                 item.title
                                             }}</a-checkbox>
                                         </a-menu-item>
@@ -58,21 +59,29 @@
                     <div class="table-tool-setting-item">
                         <a-tooltip>
                             <template #title>放大</template>
-                            <icon-font type="icon-fullscreen"></icon-font>
+                            <icon-font :type="isFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'"
+                                @click="fullscreen"></icon-font>
                         </a-tooltip>
                     </div>
                     <div class="table-tool-setting-item">
                         <a-tooltip>
                             <template #title>搜索</template>
-                            <icon-font type="icon-search"></icon-font>
+                            <icon-font type="icon-search" @click="hideSearch"></icon-font>
                         </a-tooltip>
                     </div>
                 </div>
             </div>
             <div class="table-warpper">
-                <slot v-if="customTable" name="table"></slot>
-                <a-table :columns="selectedColumns" :data-source="dataSrouce">
-
+                <a-table :columns="selectedColumns" :data-source="dataSrouce" :size="tableSize" :loading="loading"
+                    :pagination="props.pagination" :scroll="showScroll ? scroll : {}" @change="handleTableChange">
+                    <template #headerCell="{ column }">
+                        <slot name="headerCell" :column="column">
+                            {{ column.title }}
+                        </slot>
+                    </template>
+                    <template #bodyCell="{ column, record }">
+                        <slot name="bodyCell" :column="column" :record=record></slot>
+                    </template>
                 </a-table>
             </div>
         </div>
@@ -81,7 +90,19 @@
 
 <script setup lang="ts">
 import type { BaseTableColumn } from '@/types/table';
-import { onMounted, reactive, ref, computed, watch } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
+import { exitFullScreen, isFullscreenForNoScroll, openFullscreen } from '@/utils/common/fullscreen';
+import type { TableProps } from 'ant-design-vue';
+import { storeToRefs } from 'pinia';
+import useStore from '@/stores';
+import { tableOtherHeight, tableTabsHeight } from '@/utils/table';
+const { theme } = useStore();
+const { themeSetting } = storeToRefs(theme);
+
+interface BaseListOption {
+    searchToolHeight: number
+}
+
 const props = defineProps({
     customTable: {
         type: Boolean,
@@ -89,34 +110,129 @@ const props = defineProps({
     },
     columns: {
         type: Array,
-        default: ():BaseTableColumn[] => []
+        default: (): BaseTableColumn[] => []
     },
-    dataSrouce:{
+    dataSrouce: {
         type: Array,
         default: () => []
+    },
+    loading: {
+        type: Boolean,
+        default: false
+    },
+    showScroll: {
+        type: Boolean,
+        default: false
+    },
+    options: {
+        type: Object,
+        default: {} as BaseListOption
+    },
+    pagination: {
+        type: [Object, Boolean],
+        default: false
     }
 })
 
-const selectedColumns = computed(() => {
-     return checkedList.filter(x=>x.checked);
-});
-
-const emit = defineEmits(['reload'])
+const baseTable = ref(null);
+const sizeShow = ref(false);
+const tableSize = ref('default');
+const showSearch = ref(true);
+const emit = defineEmits(['reload', 'tableChange', 'showSearch'])
 const indeterminate = ref(false);
 const checkAll = ref(true);
+let checkedColumnKeys = reactive<any[]>([
+    ...props.columns.map((x: BaseTableColumn) => { return { key: x.key as string, title: x.title, checked: true } })
+]);
 
-let checkedList = reactive<BaseTableColumn[]>(
-    [...props.columns.map((x: any) => Object.assign({},x,{checked:true}))]);
 
-const onCheckAllChange = () => {
+const selectedColumns = computed(() => {
+    return props.columns.filter((x: any) =>
+        checkedColumnKeys.some(y => y.key === x.dataIndex && y.checked));
+});
+
+const isFullScreen = ref(false);
+const windowHeight = window.innerHeight;
+const scroll = computed(() => {
+    return {
+        x: props.columns.reduce(((p: any, c) => (p.width || 60) + c), 0),
+        y: isFullScreen.value ? windowHeight :
+            (windowHeight - tableOtherHeight
+                - (themeSetting.value.showManytabs ? tableTabsHeight : 0)
+                - (showSearch.value ? (props.options.searchToolHeight || 80) : 12)
+                - (themeSetting.value.showFooter ? 46 : 0))
+    };
+})
+
+
+const onCheckAllChange = (e: any) => {
+    if (e.target.checked) {
+        checkedColumnKeys.forEach(x => {
+            x.checked = true;
+        });
+        indeterminate.value = false;
+    } else {
+        checkedColumnKeys.forEach(x => {
+            x.checked = false;
+        })
+        indeterminate.value = false;
+    }
+}
+
+const onCheckChange = () => {
+    console.log(checkedColumnKeys)
+    checkAll.value = checkedColumnKeys.every(x => x.checked);
+    indeterminate.value = checkAll.value ? false : checkedColumnKeys.some(x => x.checked);
+    console.log(checkAll.value, indeterminate.value);
+}
+
+const selectSize = (size: string) => {
+    tableSize.value = size;
+}
+
+const reload = () => {
+    console.log(props.loading);
+    if (props.loading) {
+        return;
+    }
+    emit('reload');
+}
+
+const fullscreen = () => {
+
+    if (isFullscreenForNoScroll()) {
+        isFullScreen.value = false;
+        exitFullScreen();
+
+    } else {
+        isFullScreen.value = true;
+        openFullscreen(baseTable.value);
+    }
 
 }
 
+const hideSearch = () => {
+    showSearch.value = !showSearch.value;
+    emit('showSearch', showSearch.value);
+}
 
-watch(()=>props.columns,(val)=>{
-    checkedList = [...val.map((x: any) => Object.assign({},x,{checked:true}))]
+const handleTableChange: TableProps['onChange'] = (
+    pag: { pageSize: number; current: number },
+    filters: any,
+    sorter: any,
+) => {
+    emit('tableChange', pag, filters, sorter)
+};
+
+watch(() => props.columns, (val) => {
+    console.log(val)
+    // checkedList = [...val.map((x: any) => Object.assign({}, x, { checked: true }))]
 })
 
+// watch(() => props, (val) => {
+//     checkedList = [...props.columns.map((x: any) => Object.assign({}, x, { checked: true }))]
+//     console.log(val);
+// })
 
 
 </script>

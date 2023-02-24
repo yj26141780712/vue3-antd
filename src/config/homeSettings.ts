@@ -44,18 +44,20 @@ export interface ThemeSetting {
     fixedManytabs?: boolean;
     siderWidth?: number;
     collapsedWidth?: number;
+    showFooter: boolean;
 }
 
 export const getDefaultThemeSetting = function (): ThemeSetting {
     return {
         currentTheme: 'light',
         currentNavigationMode: 'mixin',
-        currentThemeColor: 'blue',
+        currentThemeColor: 'green',
         fixedHeader: true,
         fixedSidebar: true,
         showManytabs: true,
         fixedManytabs: true,
         siderWidth: 200,
-        collapsedWidth: 48
+        collapsedWidth: 48,
+        showFooter: true
     }
 }

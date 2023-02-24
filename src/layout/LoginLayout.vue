@@ -1,14 +1,15 @@
 <template>
     <div id="userLayout" :class="['user-layout-wrapper', isMobile && 'mobile']">
         <div class="container">
+            <img src="~@/assets/images/logo.png" alt="logo" class="logo">
             <div class="header">
                 <div class="main">
-                    <img src="~@/assets/logo.svg" alt="logo" class="logo">
-                    <span class="title">Admin Pro</span>
+
+                    <span class="title">家庭体检管理系统</span>
                 </div>
-                <div class="desc">
-                    Ant Design 是西湖区最具影响力的 Web 设计规范
-                </div>
+                <!-- <div class="desc">
+                  
+                </div> -->
             </div>
             <div class="main">
                 <RouterView />
@@ -39,6 +40,21 @@ onMounted(() => {
 
 </script>
 <style lang="less" scoped>
+// @import '@/assets/styles/image.less';
+
+.logo {
+    position: absolute;
+    height: 66px;
+    width: 164px;
+    top: 40px;
+    left: 48px;
+}
+
+.container {
+    background: url(@/assets/images/bg.png);
+    background-size: cover
+}
+
 #userLayout.user-layout-wrapper {
     height: 100%;
 
@@ -46,15 +62,15 @@ onMounted(() => {
         position: relative;
         width: 100%;
         min-height: 100%;
-        padding: 110px 0 144px;
+        padding: 130px 0 144px;
 
         .header {
 
             text-align: center;
 
             .main {
-                line-height: 44px;
-                height: 44px;
+                line-height: 80px;
+                height: 80px;
             }
 
             .desc {
@@ -63,21 +79,21 @@ onMounted(() => {
                 font-size: 14px;
             }
 
-            .logo {
-                height: 44px;
-                vertical-align: top;
-            }
+
 
             .title {
                 font-size: 33px;
                 font-weight: 600;
+                color: #4294d1
             }
         }
 
         .main {
-            width: 368px;
+            padding: 12px 28px;
+            width: 420px;
             min-width: 260px;
             margin: 0 auto;
+            background-color: #dee8eb;
         }
 
         .footer {

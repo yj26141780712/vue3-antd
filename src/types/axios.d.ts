@@ -12,9 +12,10 @@ export interface RequestOptions {
     isTransformResponse?: boolean;
 }
 
-export interface Result {
+export interface Result<T> {
     code: ResultEnum;
     message: string;
-    data: any
+    data: T | T[];
+    total?: number;
 }
 

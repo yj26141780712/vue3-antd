@@ -1,21 +1,20 @@
 <template>
-    <a-layout-header v-if="fixedHeader" style="background-color: transparent;"
-        :style="{ height: '48px', 'line-height': '48px' }">头部</a-layout-header>
+    <a-layout-header v-if="fixedHeader" style="background-color: transparent;">头部</a-layout-header>
     <a-layout-header :class="{ 'fixed-header': fixedHeader, 'sider-header': siderHeader, light: isLight }" :style="{
-        'width': headerWidth, 'z-index': zIndex99 ? 99 : 10, height: '48px', 'line-height': '48px'
+        'width': headerWidth, 'z-index': zIndex99 ? 99 : 10
     }" style="padding: 0;">
         <div class="header-main">
             <div v-if="showHeaderLogo && !showHeadCollapsedButton" class="header-main-left">
-                <img class="eliga-logo" src="@/assets/images/eliga.png" alt="">
-                <span>家庭体检系统</span>
+                <img class="logo" src="~@/assets/images/logo.png" alt="logo">
+                <span class="title">家庭体检管理系统</span>
             </div>
-            <div v-if="showHeadCollapsedButton" class="header-collapsed-button" @click="toggleCollapsed()">
-                <icon-font type="icon-menu-fold"></icon-font>
+            <div v-if="showHeadCollapsedButton" class="header-collapsed-button">
+                <icon-font type="icon-menu-fold" :class="{ 'reverse': isCollapsed }" @click="toggleCollapsed"></icon-font>
             </div>
             <div class="header-main-center" style="flex: 1 1 0%;">
             </div>
             <div class="header-main-right">
-                <a-dropdown class="message-dropmenu">
+                <!-- <a-dropdown class="message-dropmenu" :trigger="'click'">
                     <span class="user-notice-button">
                         <a-badge count="11">
                             <icon-font type="icon-user" class="message-icon" />
@@ -24,12 +23,15 @@
                     <template #overlay>
 
                     </template>
-                </a-dropdown>
-                <a-dropdown class="user-dropmenu">
+                </a-dropdown> -->
+                <a-dropdown class="user-dropmenu" :trigger="'click'">
                     <span>
-                        <a-avatar nzIcon="user" :src="''" :size="32">
+                        <a-avatar :src="''" :size="48">
+                            <template #icon>
+                                <icon-font type="icon-user"></icon-font>
+                            </template>
                         </a-avatar>
-                        <span class="title">{{ info['name'] || '未知' }}</span>
+                        <span class="title">{{ userName }}</span>
                     </span>
                     <template #overlay>
                         <a-menu style="width: 160px;">
@@ -53,6 +55,23 @@
                         </a-menu>
                     </template>
                 </a-dropdown>
+                <!-- <a-dropdown class="global-dropmenu" :trigger="'click'">
+                    <span>
+                        <icon-font type="icon-global"></icon-font>
+                    </span>
+                    <template #overlay>
+                        <a-menu style="width: 120px;">
+                            <a-menu-item class="user-dropmenu-item">
+                                <span class="text-icon">CN</span>
+                                <span>简体中文</span>
+                            </a-menu-item>
+                            <a-menu-item class="user-dropmenu-item">
+                                <span class="text-icon">US</span>
+                                <span>English</span>
+                            </a-menu-item>
+                        </a-menu>
+                    </template>
+                </a-dropdown> -->
             </div>
         </div>
     </a-layout-header>
@@ -66,18 +85,25 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 const { theme, user } = useStore();
 const { isCollapsed, themeSetting, isLessMobileWidth } = storeToRefs(theme);
-const { info } = storeToRefs(user);
+const { userInfo } = storeToRefs(user);
+const { logout: userLogout } = user;
 const router = useRouter();
-
 const visible = ref(false);
+
+const userName = computed(() => {
+    console.log(userInfo.value);
+    return userInfo.value && (userInfo.value.name || userInfo.value.account);
+})
+
 const fixedHeader = computed(() => {
     return themeSetting.value.fixedHeader;
 });
 
 const headerWidth = computed(() => {
+    console.log(isCollapsed.value);
     return (!isLessMobileWidth.value && themeSetting.value.currentNavigationMode === 'sider'
         && fixedHeader.value)
-        ? `calc(100% - ${isCollapsed.value ? themeSetting.value.siderWidth : themeSetting.value.collapsedWidth}px)`
+        ? `calc(100% - ${isCollapsed.value ? themeSetting.value.collapsedWidth : themeSetting.value.siderWidth}px)`
         : '100%'
 })
 
@@ -98,16 +124,13 @@ const showHeaderLogo = computed(() => {
 });
 
 const isLight = computed(() => {
-    return (themeSetting.value.currentTheme === 'light'
-        && themeSetting.value.currentNavigationMode === 'sider') || (
-            themeSetting.value.currentTheme === 'dark' &&
-            (themeSetting.value.currentNavigationMode === 'sider' ||
-                themeSetting.value.currentNavigationMode === 'mixin')
-        );
+    return themeSetting.value.currentTheme === 'light'
+        || (themeSetting.value.currentTheme === 'dark' &&
+            themeSetting.value.currentNavigationMode === 'sider');
 })
 
 const toggleCollapsed = function () {
-
+    isCollapsed.value = !isCollapsed.value;
 }
 const afterVisibleChange = function () {
 
@@ -116,8 +139,8 @@ const showSetting = function () {
     visible.value = true;
 }
 const logout = function () {
-    console.log(123);
     router.push('/user/login');
+    userLogout();
 }
 </script>
 <style lang="less" scoped>
@@ -129,7 +152,8 @@ const logout = function () {
 }
 
 .light {
-    background-color: #fff;
+    background-color: #dee8eb;
+    color: #4294d1;
 }
 
 .header-main {
@@ -145,24 +169,15 @@ const logout = function () {
         align-items: center;
         overflow: hidden;
 
-        span {
-            font-size: 16px;
-
-            &.pamfa {
-                font-size: 36px;
-
-                &+span {
-                    font-weight: 600;
-                    font-size: 20px;
-                    margin-left: 28px;
-                }
-            }
+        .logo {
+            height: 42px;
         }
 
-        span[nz-icon] {
-            font-size: 72px;
-            margin-right: 6px;
+        .title {
+            margin-left: 12px;
+            font-size: 30px;
         }
+
     }
 
     &-logo {
@@ -196,6 +211,7 @@ const logout = function () {
 
         .global-dropmenu {
             font-size: 24px;
+            color: #fff;
         }
     }
 
@@ -210,16 +226,18 @@ const logout = function () {
 
 .user-notice-button {
     padding: 0 12px;
-    height: 48px;
-    line-height: 48px;
+    height: 64px;
+    line-height: 64px;
     display: inline-block;
+    vertical-align: top;
 }
 
 .user-dropmenu {
     padding: 0 12px;
-    line-height: 48px;
-    height: 48px;
+    line-height: 64px;
+    height: 64px;
     display: inline-block;
+    vertical-align: top;
 
     &:after {
         content: '';
@@ -231,7 +249,7 @@ const logout = function () {
 
     .title {
         font-size: 16px;
-        margin-left: 4px;
+        margin-left: 8px;
         vertical-align: middle;
     }
 
@@ -247,9 +265,20 @@ const logout = function () {
     }
 }
 
+.global-dropmenu {
+    height: 64px;
+    line-height: 64px;
+    vertical-align: top;
+    display: inline-block;
+}
+
 .message-icon {
     padding: 4px;
     font-size: 16px;
     vertical-align: middle;
+}
+
+.reverse {
+    transform: rotate(180deg);
 }
 </style>

@@ -10,3 +10,8 @@ export interface CompanySearchForm {
     companyName: string;
 }
 
+export interface Company {
+
+}
+
+

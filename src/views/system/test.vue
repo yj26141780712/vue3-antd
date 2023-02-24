@@ -33,9 +33,6 @@
                 <a @click="deleteItem(record)">
                     删除
                 </a>
-                <a @click="openMenuForm(record)">
-                    设置权限
-                </a>
             </template>
         </template>
     </BaseList>
@@ -88,34 +85,21 @@
             </a-row>
         </a-form>
     </BaseForm>
-    <BaseForm :visible="menuFormVisible" :title="'设置公司权限'" :formLoading="menuFormLoading" @cancel="menuFormCancel"
-        @ok="menuFormOk">
-        <a-spin :spinning="menuTreeLoading">
-            <div class="form-tab">
-                <a-tree v-if="menuTreeData.length" v-model:checkedKeys="checkedKeys" :tree-data="menuTreeData" checkable
-                    defaultExpandAll>
-                    <template #title="{ title, key }">
-                        {{ title }}
-                    </template>
-                </a-tree>
-            </div>
-        </a-spin>
-    </BaseForm>
 </template>
 
 <script setup lang="ts">
-import { getCompanyListApi, createCompany, updateCompanyById, deleteCompanyById, getMenuListApi, companyGetMenusById, companySetMenus } from '@/api/system';
+import { getCompanyListApi, createCompany, updateCompanyById, deleteCompanyById } from '@/api/system';
+import type { ColumnType } from 'ant-design-vue/lib/table';
 import { reactive, ref, toRaw, computed } from 'vue';
 import { useMessage } from '@/hooks/web/useMessage';
-import type { FormInstance, TreeProps } from 'ant-design-vue';
+import type { FormInstance } from 'ant-design-vue';
 import type { Rule } from 'ant-design-vue/lib/form';
 import { Form } from 'ant-design-vue';
 import { mailReg, phoneReg, accountReg, passwordReg } from '@/types/reg';
-import { getObjectValue, toTreeData } from '@/utils/form';
+import { getObjectValue } from '@/utils/form';
 import { usePagination } from 'vue-request';
 import type { Result } from '@/types/axios';
 import { tableShowTotal } from '@/utils/table';
-import type { CompanyModel } from '@/api/system/model/company';
 
 interface FormState {
     companyName: string;
@@ -192,7 +176,7 @@ const total = ref(0);
 const sortField = ref('');
 const sortOrder = ref('');
 const { data: dataSrouce, run, loading, current, pageSize } = usePagination(loadData, {
-    formatResult: (res: Result<CompanyModel>) => {
+    formatResult: (res: Result) => {
         total.value = res.total;
         return res.data;
     },
@@ -357,62 +341,5 @@ const ok = () => {
         });
 }
 
-// 权限表单
-let menuFormVisible = ref(false);
-let menuFormLoading = ref(false);
-let menuTreeLoading = ref(false);
-let menuTreeData: TreeProps['treeData'] = []
-let checkedKeys = ref<number[]>([]);
-let menuFormOpId = 0;
-
-const openMenuForm = (record: any) => {
-    checkedKeys.value = [];
-    menuTreeData = [];
-    menuFormOpId = record.id;
-    menuFormVisible.value = true;
-    menuTreeLoading.value = true;
-    Promise.all([getMenuListApi({ name: '' }), companyGetMenusById(menuFormOpId)])
-        .then((results) => {
-            if (results[0]) {
-                menuTreeData = [{ key: 0, title: '全部', children: toTreeData((results[0].data as []), 0) }];
-            }
-            if (results[1]) {
-                checkedKeys.value = results[1].map(x => x.id);
-            }
-            menuTreeLoading.value = false;
-        })
-        .catch(err => {
-            console.log(err);
-        })
-}
-
-const menuFormCancel = () => {
-    menuFormVisible.value = false;
-}
-
-const menuFormOk = () => {
-    if (menuFormLoading.value === true || menuTreeLoading.value === true) {
-        return;
-    }
-    menuFormLoading.value = true;
-    companySetMenus(menuFormOpId,
-        JSON.stringify(checkedKeys.value.map(x => {
-            return { id: x }
-        })))
-        .then((res) => {
-            menuFormLoading.value = false;
-            menuFormCancel();
-        })
-        .catch(err => {
-            menuFormLoading.value = false;
-        });
-}
-
 </script>
-<style lang="less" scoped>
-.form-tab {
-    height: 300px;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-</style>
+<style lang="less" scoped></style>

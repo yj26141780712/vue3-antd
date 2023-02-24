@@ -9,12 +9,12 @@ import DefineOptions from 'unplugin-vue-define-options/vite';
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
-    base: '/eliga/',
+    base: '/homeHealthCloud/',
     plugins: [
       vue(),
       Components({
         dirs: ['src/components'], // 配置需要默认导入的自定义组件文件夹，该文件夹下的所有组件都会自动 import
-        resolvers: [AntDesignVueResolver({ importStyle: 'less' })]
+        resolvers: [AntDesignVueResolver({ importStyle: false })]
       }),
       DefineOptions()
     ],

@@ -1,6 +1,6 @@
 import { ResultEnum } from '@/enums/ResultEnum';
 import type { RequestOptions, Result } from '@/types/axios';
-import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import axios, { AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import i18n from '@/locals';
 import { useMessage } from '@/hooks/web/useMessage';
 import { getToken } from '../cache';
@@ -35,24 +35,33 @@ instance.interceptors.request.use(function (config) {
 })
 
 instance.interceptors.response.use(async (response: AxiosResponse<Result>) => {
+    const config = response.config;
+    if (config.url === '/refreshtoken') {
+        return response;
+    }
     const { code } = response.data;
     if (code === ResultEnum.ErrorToken || code === ResultEnum.ExpiredToken) {
         //token无效 拦截重新刷新token
-        const config = response.config;
         if (!isRefreshing) {
             try {
                 isRefreshing = true;
                 const res = await refreshToken();
-                const { token } = res.data;
-                //设置token;
-                config.headers['token'] = token;
-                requests.forEach(cb => cb(token))
-                // 重试完了别忘了清空这个队列
-                requests = []
-                return await instance(config);
+                console.log(res);
+                const { code, token } = res.data;
+                if (code === 200) {
+                    //设置token;
+                    config.headers['token'] = token;
+                    requests.forEach(cb => cb(token))
+                    // 重试完了别忘了清空这个队列
+                    requests = []
+                    return await instance(config);
+                } else {
+                    console.log('刷新token失败');
+                    window.location.href = `${import.meta.env.BASE_URL}user/login`;
+                }
             } catch (err) {
                 console.log('刷新token失败', err);
-                window.location.href = '/eliga/user/login';
+                window.location.href = `${import.meta.env.BASE_URL}user/login`;
             } finally {
                 isRefreshing = false;
             }
@@ -71,7 +80,8 @@ instance.interceptors.response.use(async (response: AxiosResponse<Result>) => {
 })
 
 const refreshToken = async function () {
-    const res = await get({ url: '/refreshtoken' });
+    const res = await instance.request({ method: 'get', url: '/refreshtoken' });
+    instance.interceptors.response
     return res.data;
 }
 
@@ -90,12 +100,14 @@ const transformRequestHook = function (res: AxiosResponse<Result>, options: Requ
     }
     const { code, message } = data;
     if (code === ResultEnum.Ok) {
+        console.log(123);
         if (message && options.successMessageMode === 'modal') {
             createSuccessModal({ content: message });
         }
         if (message && options.successMessageMode === 'message') {
-            createMessage.success(message);
+            createMessage.success(message || '操作成功！');
         }
+
         return data.data;
     } else {
         if (message && options.errorMessageMode === 'modal') {
@@ -125,7 +137,10 @@ const request = async function <T = any>(conf: AxiosRequestConfig<any>, options?
     try {
         const res = await instance.request(conf);
         return await Promise.resolve(transformRequestHook(res, options));
-    } catch (err) {
+    } catch (err: any | AxiosError) {
+        if (axios.isAxiosError(err)) {
+
+        }
         return await Promise.reject(err);
     }
 }

@@ -18,8 +18,7 @@
                             <icon-font type="icon-password" class="prefixIcon" />
                         </template>
                         <template #suffix>
-                            <icon-font type="icon-eye" v-if="isShowPassword"
-                                @click="isShowPassword = !isShowPassword" />
+                            <icon-font type="icon-eye" v-if="isShowPassword" @click="isShowPassword = !isShowPassword" />
                             <icon-font type="icon-eye-close" v-else="!isShowPassword"
                                 @click="isShowPassword = !isShowPassword" />
                         </template>
@@ -28,8 +27,7 @@
             </a-tab-pane>
             <a-tab-pane key="mobile" tab="手机号登录" force-render>
                 <a-form-item name="mobile">
-                    <a-input v-model:value="formState.mobile" type="text" :placeholder="$t('login.mobile')"
-                        size="large">
+                    <a-input v-model:value="formState.mobile" type="text" :placeholder="$t('login.mobile')" size="large">
                         <template #prefix>
                             <icon-font type="icon-phone" class="prefixIcon"></icon-font>
                         </template>
@@ -125,7 +123,7 @@ const onSubmit = () => {
 const finish = async function () {
     try {
         const res = await user.login(formState, activeKey.value);
-        router.push({ path: '/' })
+        router.push({ path: '/home' })
         loading.value = false;
     } catch (err) {
         createErrorModal({ content: err.message || t('sys.api.networkExceptionMsg'), iconType: 'error' })

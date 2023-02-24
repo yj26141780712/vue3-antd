@@ -28,8 +28,8 @@
                 <h3 class="ant-pro-setting-drawer-title">导航模式</h3>
                 <div class="ant-pro-setting-drawer-block-checbox" style="margin-bottom: 24px;">
                     <a-tooltip v-for="mode of navigationModes" :title="mode">
-                        <div class="ant-pro-checkbox-item" :class="['ant-pro-checkbox-item-' + mode + '-menu']"
-                            a-tooltip @click="selectMode(mode)">
+                        <div class="ant-pro-checkbox-item" :class="['ant-pro-checkbox-item-' + mode + '-menu']" a-tooltip
+                            @click="selectMode(mode)">
                             <icon-font type="icon-check" v-if="themeSetting.currentNavigationMode == mode" />
                         </div>
 
@@ -39,7 +39,8 @@
                     <a-list-item>
                         固定头部
                         <template #actions>
-                            <a-switch size="small" a-tooltip v-model:checked="themeSetting.fixedHeader">
+                            <a-switch size="small" a-tooltip v-model:checked="themeSetting.fixedHeader"
+                                @change="headerChange">
                             </a-switch>
                         </template>
                     </a-list-item>
@@ -68,6 +69,13 @@
                         <template #actions>
                             <a-switch size="small" :disabled="!themeSetting.fixedHeader || !themeSetting.showManytabs"
                                 v-model:checked="themeSetting.fixedManytabs">
+                            </a-switch>
+                        </template>
+                    </a-list-item>
+                    <a-list-item>
+                        底部
+                        <template #actions>
+                            <a-switch size="small" v-model:checked="themeSetting.showFooter">
                             </a-switch>
                         </template>
                     </a-list-item>
@@ -101,11 +109,21 @@ const selectTheme = function (style: ThemeStyle) {
 
 const selectMode = function (mode: NavigationMode) {
     themeSetting.value.currentNavigationMode = mode
+    if (themeSetting.value.currentNavigationMode === 'mixin') {
+        themeSetting.value.fixedHeader = true;
+    }
 }
 
 const changeColor = function (color: ColorType) {
     changeThemeColor(color.name);
     themeSetting.value.currentThemeColor = color.name;
+}
+
+const headerChange = () => {
+    if (themeSetting.value.fixedHeader === false) {
+        themeSetting.value.fixedManytabs = false;
+    }
+
 }
 
 </script>

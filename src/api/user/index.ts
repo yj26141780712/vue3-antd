@@ -18,5 +18,13 @@ export function loginApi(info: LoginParams, errorMessageMode: ErrorMessageMode =
 }
 
 export function getInfoApi() {
-    return http.get({ url: 'account/selfDetail' });
+    return http.get({
+        url: 'account/selfDetail'
+    }, { errorMessageMode: 'none', successMessageMode: 'none' });
+}
+
+export function getUserMenusApi() {
+    return http.get({
+        url: 'account/menus'
+    }, { errorMessageMode: 'none', successMessageMode: 'none' });
 }

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="fixedManyTabs" class="" style="height:62px">
+    <div v-if="showManyTabs" :style="{ height: fixedManyTabs ? '62px' : '0' }">
 
     </div>
     <a-tabs v-if="showManyTabs" class="home-multi-tabs" :class="{ 'fixed-tabs': fixedManyTabs }"
@@ -64,6 +64,9 @@ const fixedManyTabs = computed(() => {
 });
 
 const manyTabsWidth = computed(() => {
+    if (!themeSetting.value.fixedManytabs) {
+        return '100%';
+    }
     return (themeSetting.value.currentNavigationMode === 'sider'
         || themeSetting.value.currentNavigationMode === 'mixin') ? `calc(100% - ${!isCollapsed.value ? themeSetting.value.siderWidth :
             themeSetting.value.collapsedWidth
@@ -127,7 +130,7 @@ const closePage = (tab: RouteLocationNormalized, index: number) => {
 
 .fixed-tabs {
     position: fixed;
-    top: 48px;
+    top: 64px;
     right: 0;
     z-index: 10;
     height: 62px;

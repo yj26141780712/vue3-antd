@@ -12,5 +12,8 @@ declare module "*.vue" {
 
 declare module 'gsap';
 
+declare module 'vue-request';
+
+
 // declare module 'unplugin-vue-define-options/vite';
 

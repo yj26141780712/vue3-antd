@@ -16,14 +16,15 @@
 <script setup lang="ts">
 import useStore from '@/stores';
 import { storeToRefs } from 'pinia';
-const { theme } = useStore();
-const { isCollapsed } = storeToRefs(theme);
+import { onMounted } from 'vue';
 
+const { theme, user } = useStore();
+const { getUserMenus, getUserInfo } = user;
 
-const toggleCollapsed = function () {
-    isCollapsed.value = !isCollapsed.value;
-}
-
+onMounted(() => {
+    // getUserMenus();
+    // getUserInfo();
+})
 
 
 </script>

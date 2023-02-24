@@ -1,6 +1,9 @@
 export default {
     common: {
-        okText: '确定'
+        okText: '确定',
+        actions: '操作',
+        cancel: '取消',
+        submit: '提交'
     },
     login: {
         'userName': '用户名',
