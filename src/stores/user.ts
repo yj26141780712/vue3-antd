@@ -62,15 +62,25 @@ export const useUserStore = defineStore('user', () => {
         return newArr;
     };
     const getUserMenus = async function () {
-        const res = await getUserMenusApi();
-        userMenus.value = res;
-        const home: MenuItem = { id: 0, key: '0', icon: 'icon-home', url: 'home', title: '主页' }
-        siderMenus.value = [home]
-            .concat(toMenus(userMenus.value, 0));
+        try {
+            const res = await getUserMenusApi();
+            userMenus.value = res;
+            const home: MenuItem = { id: 0, key: '0', icon: 'icon-home', url: 'home', title: '主页' }
+            siderMenus.value = [home]
+                .concat(toMenus(userMenus.value, 0));
+        } catch (err) {
+            throw err;
+        }
+
+
     }
     const getUserInfo = async function () {
-        const res = await getInfoApi();
-        userInfo.value = res;
+        try {
+            const res = await getInfoApi();
+            userInfo.value = res;
+        } catch (err) {
+            throw err;
+        }
     }
     return { token, userInfo, getRoleLength, getToken, siderMenus, login, logout, getUserMenus, getUserInfo };
 })

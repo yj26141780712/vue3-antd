@@ -113,12 +113,10 @@ const tabsChange = () => {
     rules.mobile[0].required = activeKey.value === LoginType.CodeLogin;
     rules.code[0].required = activeKey.value === LoginType.CodeLogin;
 }
-const onSubmit = () => {
 
+const onSubmit = () => {
     loading.value = true;
 }
-
-
 
 const finish = async function () {
     try {

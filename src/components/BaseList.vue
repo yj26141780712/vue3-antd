@@ -1,5 +1,5 @@
 <template>
-    <div class="page-container">
+    <div>
         <div v-if="showSearch" class="table-search">
             <slot name="search"></slot>
         </div>

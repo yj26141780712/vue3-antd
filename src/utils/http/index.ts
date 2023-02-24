@@ -34,7 +34,7 @@ instance.interceptors.request.use(function (config) {
     return Promise.reject(error);
 })
 
-instance.interceptors.response.use(async (response: AxiosResponse<Result>) => {
+instance.interceptors.response.use(async (response: AxiosResponse<Result<any>>) => {
     const config = response.config;
     if (config.url === '/refreshtoken') {
         return response;
@@ -85,7 +85,7 @@ const refreshToken = async function () {
     return res.data;
 }
 
-const transformRequestHook = function (res: AxiosResponse<Result>, options: RequestOptions) {
+const transformRequestHook = function (res: AxiosResponse<Result<any>>, options: RequestOptions) {
     const { t } = i18n.global;
     const { isReturnNativeResponse, isTransformResponse } = options;
     if (isReturnNativeResponse) {

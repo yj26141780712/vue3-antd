@@ -1,12 +1,10 @@
-import type { BaseTableTreeDataItem } from "@/types/table"
-
 export const tableOtherHeight = 231;
 
 export const tableTabsHeight = 62;
 
 export const tableShowTotal = (total: number, range: number) => `${range[0]}-${range[1]} ，共 ${total} 项`
 
-export const toTreeData = function (arr: BaseTableTreeDataItem[], parentId = 0) {
+export const toTreeData = function (arr: any[], parentId = 0) {
     const datas = arr.filter(x => x.parentId === parentId);
     if (datas.every(x => x.sort != null || x.sort != undefined)) {
         datas.sort((a, b) => a.sort - b.sort);

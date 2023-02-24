@@ -1,6 +1,6 @@
 <template>
-    <BaseList :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="pagination" @reload="reload"
-        @tableChange="handleTableChange">
+    <BaseList class="page-container" :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="pagination"
+        @reload="reload" @tableChange="handleTableChange">
         <template #search>
             <a-form ref="searchFormRef" :model="searchFormState">
                 <a-row :gutter="[16, 16]">
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { getRoleListApi, getMenuListApi, createRoleApi, updateRoleByIdApi, deleteRoleByIdApi, roleSetMenus, roleGetMenus } from '@/api/system';
+import { getRoleListApi, getCompanyMenus, createRoleApi, updateRoleByIdApi, deleteRoleByIdApi, roleSetMenus, roleGetMenus } from '@/api/system';
 import { reactive, ref, toRaw, computed } from 'vue';
 import { useMessage } from '@/hooks/web/useMessage';
 import type { FormInstance } from 'ant-design-vue';
@@ -263,12 +263,16 @@ const openMenuForm = (record: any) => {
     menuFormOpId = record.id;
     menuFormVisible.value = true;
     menuTreeLoading.value = true;
-    Promise.all([getMenuListApi({ name: '' }), roleGetMenus(menuFormOpId)])
+    Promise.all([getCompanyMenus(), roleGetMenus(menuFormOpId)])
         .then((results) => {
             if (results[0]) {
-                menuTreeData = [{ key: 0, title: '全部', children: toTreeData((results[0].data as []), 0) }];
+                menuTreeData = [{
+                    key: 0, title: '全部', children:
+                        toTreeData((results[0] || []), 0)
+                }];
             }
             if (results[1]) {
+                console.log(results[1])
                 checkedKeys.value = results[1].map(x => x.id);
             }
             menuTreeLoading.value = false;

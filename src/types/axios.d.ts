@@ -15,7 +15,7 @@ export interface RequestOptions {
 export interface Result<T> {
     code: ResultEnum;
     message: string;
-    data: T | T[];
+    data: T;
     total?: number;
 }
 

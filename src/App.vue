@@ -19,6 +19,4 @@ onMounted(() => {
   </a-config-provider>
 </template>
 
-<style >
-
-</style>
+<style ></style>

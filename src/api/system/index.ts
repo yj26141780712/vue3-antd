@@ -1,5 +1,6 @@
 import type { RequestOptions, Result } from "@/types/axios";
 import { http } from "@/utils/http";
+import axios from "axios";
 import type { Pagination } from "../comon/model/Pagination";
 import type { CompanyModel, CompanySearchForm } from "./model/company";
 import type { MenuModel, MenuSearchForm } from "./model/menu";
@@ -87,7 +88,10 @@ export function getRoleListApi(params: RoleSearchForm,
     options: RequestOptions = {
         errorMessageMode: 'message', successMessageMode: 'none', isTransformResponse: false
     }) {
-    return http.get<CompanyModel[]>({ url: 'role/list', params: params }, options);
+    return http.get<RoleModel[]>({
+        url: 'role/list',
+        params: params
+    }, options);
 }
 
 export function createRoleApi(params: RoleModel,
@@ -123,7 +127,13 @@ export function roleSetMenus(id: number, menus: string, options: RequestOptions 
 export function roleGetMenus(id: number, options: RequestOptions = {
     errorMessageMode: 'message', successMessageMode: 'none'
 }) {
-    return http.get<Result<any>>({
+    return http.get<any[]>({
         url: 'role/menusById', params: { id }
     }, options);
+}
+
+export function getCompanyMenus() {
+    return http.get<MenuModel[]>({
+        url: 'menu/listByCompany',
+    }, { successMessageMode: 'none' });
 }

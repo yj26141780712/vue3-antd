@@ -1,6 +1,6 @@
 <template>
-    <BaseList :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="pagination" @reload="reload"
-        @tableChange="handleTableChange">
+    <BaseList class="page-container" :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="pagination"
+        @reload="reload" @tableChange="handleTableChange">
         <template #search>
             <a-form ref="searchFormRef" :model="searchFormState">
                 <a-row :gutter="[16, 16]">
@@ -268,9 +268,7 @@ const modelRef = reactive<FormState>({
 
 const ruleRef: Record<string, Rule[]> = reactive({
     companyName: [{ required: true, message: '请输入公司名称' }],
-    companyAddress: [{ type: 'string' }],
     companyEmail: [{ type: 'string', pattern: mailReg, message: '请输入正确的邮箱！' }],
-    companyPhone: [{ type: 'string' }],
     adminAccount: [
         { required: true, message: '请输入管理员账号' },
         { type: 'string', pattern: accountReg, message: '请输入正确的账号，6-20位的数字和字母混合组成！' }

@@ -1,6 +1,6 @@
 <template>
-    <BaseList :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="false" :showScroll="true"
-        @reload="reload" :options="{ searchToolHeight: 80 }">
+    <BaseList class="page-container" :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="false"
+        :showScroll="true" @reload="reload" :options="{ searchToolHeight: 80 }">
         <template #search>
             <a-form ref="searchFormRef" :model="searchFormState">
                 <a-row :gutter="[16, 16]">
@@ -120,16 +120,16 @@ let columns = reactive([
     { title: '操作', dataIndex: 'mactions', key: 'mactions', width: 100, fixed: 'right' }
 ]);
 
-let menuDatas = [];
+let menuDatas: MenuModel[] = [];
 
 const loadData = function () {
     return getMenuListApi({ name: '' });
 }
 
 const { data: dataSrouce, run, loading } = usePagination(loadData, {
-    formatResult: (res: Result) => {
-        menuDatas = res.data;
-        return toTreeData(res.data);
+    formatResult: (res: Result<MenuModel>) => {
+        menuDatas = res.data as [];
+        return toTreeData(res.data as [] || []);
     }
 });
 

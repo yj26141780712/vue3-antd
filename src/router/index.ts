@@ -52,13 +52,18 @@ const loginPath = '/user/login';
 const defaultRoutePath = '/home';
 router.beforeEach((to, from, next) => {
   const { user } = useStore();
-  const { token } = user;
+  const { token, logout } = user;
   if (token) {
     const { userInfo } = storeToRefs(user);
     if (to.path === loginPath) { // 登录界面无需验证权限
       next({ path: defaultRoutePath })
     } else {
-      if (userInfo.value && userInfo.value.roleId) { // 需要获取用户信息
+      if (userInfo.value && userInfo.value.roleId >= 0) { // 需要获取用户信息
+        if (userInfo.value.admin === 0 && userInfo.value.roleId === 0) {
+          createMessage.error('您没有权限使用系统，请联系管理员！');
+          logout();
+          next({ path: loginPath, query: { redirect: to.fullPath } })
+        }
         const { staticRouter } = useStore();
         const { addRouter } = staticRouter;
         if (to.meta && to.meta.title) {
@@ -66,7 +71,7 @@ router.beforeEach((to, from, next) => {
         }
         next();
       } else { //首次登录先获取用户信息 
-        const { getUserMenus, getUserInfo, logout } = user;
+        const { getUserMenus, getUserInfo } = user;
         Promise.all([getUserMenus(), getUserInfo()])
           .then(() => {
             const redirect = decodeURIComponent((from.query.redirect as string) || to.path)
@@ -77,6 +82,7 @@ router.beforeEach((to, from, next) => {
             }
           })
           .catch(err => {
+            console.log(err);
             createMessage.error('获取用户信息失败！,请重新登录');
             logout();
             next({ path: loginPath, query: { redirect: to.fullPath } })

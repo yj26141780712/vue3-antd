@@ -330,7 +330,6 @@ const ok = () => {
             }
         })
         .then((res) => {
-            console.log(res);
             formLoading.value = false;
             formVisible.value = false;
             refresh({});
