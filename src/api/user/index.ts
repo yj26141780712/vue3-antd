@@ -1,6 +1,7 @@
 
 import type { ErrorMessageMode, RequestOptions } from "@/types/axios";
 import { http } from "@/utils/http";
+import axios from "axios";
 import type { Pagination } from "../comon/model/Pagination";
 import type { AccountModel } from "./model/accountModel";
 import type { LoginParams, LoginResultModel } from "./model/userModel";
@@ -65,4 +66,34 @@ export function getRoleSelectOptionsApi() {
         errorMessageMode: 'none',
         successMessageMode: 'none'
     });
+}
+
+export function getAccountListByRoleIdApi(params: AccountModel & Pagination,
+    options: RequestOptions = {
+        errorMessageMode: 'message', successMessageMode: 'none', isTransformResponse: false
+    }, obj?: any) {
+    return http.get<AccountModel[]>({
+        url: 'account/listByRoleId',
+        params: params,
+        cancelToken: new axios.CancelToken(c => {
+            if (c && obj) {
+                obj.cancel = c;
+            }
+        })
+    }, options);
+}
+
+export function getAccountListByAccountTypeApi(params: AccountModel & Pagination,
+    options: RequestOptions = {
+        errorMessageMode: 'message', successMessageMode: 'none', isTransformResponse: false
+    }, obj?: any) {
+    return http.get<AccountModel[]>({
+        url: 'account/listByAccountType',
+        params: params,
+        cancelToken: new axios.CancelToken(c => {
+            if (c && obj) {
+                obj.cancel = c;
+            }
+        })
+    }, options);
 }

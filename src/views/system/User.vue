@@ -11,7 +11,7 @@
                 <div style="padding: 12px 18px">
                     <!-- <a-input-search v-model:value="searchValue" style="margin-bottom: 8px" placeholder="Search" /> -->
                     <a-tree v-if="treeData.length" v-model:selectedKeys="selectedKeys" :tree-data="treeData" block-node
-                        defaultExpandAll>
+                        defaultExpandAll @select="selectTreeNode">
                         <template #title="{ title }">
                             <div style="width: 100%;">
                                 <icon-font type="icon-user" style="margin-right: 8px;"></icon-font>
@@ -125,7 +125,7 @@
 
 <script setup lang="ts">
 import { getRoleListApi } from '@/api/system';
-import { getAccountListApi, createAccountApi, updateAccountByIdApi, deleteAccountByIdApi, getRoleSelectOptionsApi } from '@/api/user';
+import { getAccountListByRoleIdApi, getAccountListByAccountTypeApi, createAccountApi, updateAccountByIdApi, deleteAccountByIdApi, getRoleSelectOptionsApi } from '@/api/user';
 import { reactive, ref, toRaw, computed, onMounted } from 'vue';
 import { useMessage } from '@/hooks/web/useMessage';
 import type { FormInstance, TreeProps } from 'ant-design-vue';
@@ -160,6 +160,7 @@ const tabChange = () => {
     treeData.value = [];
     selectedKeys.value = [-1];
     getTreeData();
+    refresh({});
 }
 
 const getTreeData = () => {
@@ -184,8 +185,8 @@ const getTreeData = () => {
                 title: '全部',
                 key: -1,
                 children: [
-                    { title: '监护人', key: 1 },
-                    { title: '使用人', key: 0 }
+                    { title: '监护人', key: 2 },
+                    { title: '使用人', key: 1 }
                 ]
             }
         ];
@@ -210,10 +211,19 @@ let columns = reactive([
 ]);
 
 const loadData = function (params: any) {
-    return getAccountListApi({
-        ...searchFormState,
-        ...params
-    })
+    if (activeKey.value === 'system') {
+        return getAccountListByRoleIdApi({
+            ...searchFormState,
+            roleId: selectedKeys.value[0] >= 0 ? selectedKeys.value[0] : null,
+            ...params
+        });
+    } else {
+        return getAccountListByAccountTypeApi({
+            ...searchFormState,
+            accountType: selectedKeys.value[0] >= 0 ? selectedKeys.value[0] : null,
+            ...params
+        });
+    }
 }
 const total = ref(0);
 const sortField = ref('');
@@ -237,6 +247,11 @@ const pagination = computed(() => ({
     showSizeChanger: true,
     showTotal: tableShowTotal
 }));
+
+const selectTreeNode = () => {
+    console.log(selectedKeys)
+    refresh({});
+}
 
 const handleTableChange = (pag: { pageSize: number; current: number },
     filters: any,

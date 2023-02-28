@@ -14,47 +14,6 @@
                             <template #title>刷新</template>
                             <icon-font type="icon-reload" @click="reload"></icon-font>
                         </a-tooltip>
-
-                    </div>
-                    <div class="table-tool-setting-item">
-                        <a-tooltip>
-                            <template #title>密度</template>
-                            <a-popover v-model:visible="sizeShow" placement="bottomRight" :trigger="'click'"
-                                :overlayClassName="'table-popover'">
-                                <icon-font type="icon-column-height"></icon-font>
-                                <template #content>
-                                    <a-menu style="width: 80px;">
-                                        <a-menu-item key="'default'" @click="selectSize('default')">默认</a-menu-item>
-                                        <a-menu-item key="'middle'" @click="selectSize('middle')">中等</a-menu-item>
-                                        <a-menu-item key="'small'" @click="selectSize('small')">紧凑</a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-popover>
-                        </a-tooltip>
-                    </div>
-                    <div class="table-tool-setting-item">
-                        <a-tooltip>
-                            <template #title>列设置</template>
-                            <a-popover placement="bottomRight" :trigger="'click'" :overlayClassName="'table-popover'">
-                                <icon-font type="icon-setting"></icon-font>
-                                <template #content>
-                                    <a-menu style="min-width: 180px;" :selectable="false">
-                                        <a-menu-item>
-                                            <a-checkbox v-model:checked="checkAll" :indeterminate="indeterminate"
-                                                @change="onCheckAllChange">
-                                                全选
-                                            </a-checkbox>
-                                        </a-menu-item>
-                                        <a-divider style="margin: 4px 0;"></a-divider>
-                                        <a-menu-item v-for="(item) in checkedColumnKeys" :key="item.key">
-                                            <a-checkbox v-model:checked="item.checked" @change="onCheckChange">{{
-                                                item.title
-                                            }}</a-checkbox>
-                                        </a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-popover>
-                        </a-tooltip>
                     </div>
                     <div class="table-tool-setting-item">
                         <a-tooltip>
@@ -72,17 +31,30 @@
                 </div>
             </div>
             <div class="table-warpper">
-                <a-table :columns="selectedColumns" :data-source="dataSrouce" :size="tableSize" :loading="loading"
-                    :pagination="props.pagination" :scroll="showScroll ? scroll : {}" @change="handleTableChange">
-                    <template #headerCell="{ column }">
-                        <slot name="headerCell" :column="column">
-                            {{ column.title }}
-                        </slot>
-                    </template>
-                    <template #bodyCell="{ column, record }">
-                        <slot name="bodyCell" :column="column" :record=record></slot>
-                    </template>
-                </a-table>
+                <a-spin tip="Loading..." :spinning="props.loading">
+                    <a-empty v-if="showEmpty" :image="simpleImage" />
+                    <a-row :gutter="[16, 16]">
+                        <a-col v-for="(item, index) in dataSrouce" :xs="24" :sm="24" :md="12" :lg="8">
+                            <a-card style="width: 300px">
+                                <template #title>
+                                    <slot name="cardTitle" :item="item"></slot>
+                                </template>
+                                <template #extra>
+                                    <slot name="cardExtra" :item="item"></slot>
+                                </template>
+
+                                <template #default>
+                                    <slot name="cardContent" :item="item"></slot>
+                                </template>
+                            </a-card>
+                        </a-col>
+                    </a-row>
+                </a-spin>
+                <a-pagination v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
+                    :total="pagination.total" :show-total="pagination.showTotal"
+                    :showQuickJumper="pagination.showQuickJumper" :showSizeChanger="pagination.showSizeChanger"
+                    @change="pageChange" @showSizeChange="pageShowSizeChange"
+                    class="ant-pagination ant-table-pagination ant-table-pagination-right" />
             </div>
         </div>
     </div>
@@ -92,7 +64,7 @@
 import type { BaseTableColumn } from '@/types/table';
 import { reactive, ref, computed, watch } from 'vue';
 import { exitFullScreen, isFullscreenForNoScroll, openFullscreen } from '@/utils/common/fullscreen';
-import type { TableProps } from 'ant-design-vue';
+import { Empty, type TableProps } from 'ant-design-vue';
 import { storeToRefs } from 'pinia';
 import useStore from '@/stores';
 import { tableOtherHeight, tableTabsHeight } from '@/utils/table';
@@ -133,6 +105,11 @@ const props = defineProps({
         default: false
     }
 })
+
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE
+const showEmpty = computed(() => {
+    return !(props.dataSrouce && props.dataSrouce.length > 0);
+});
 
 const baseTable = ref(null);
 const sizeShow = ref(false);
@@ -216,17 +193,27 @@ const hideSearch = () => {
     emit('showSearch', showSearch.value);
 }
 
-const handleTableChange: TableProps['onChange'] = (
-    pag: { pageSize: number; current: number },
-    filters: any,
-    sorter: any,
-) => {
-    emit('tableChange', pag, filters, sorter)
-};
 
-watch(() => props.columns, (val) => {
-    console.log(val)
-    // checkedList = [...val.map((x: any) => Object.assign({}, x, { checked: true }))]
+// 分页器
+let pagination = ref({
+    total: 0,
+    current: 1,
+    pageSize: 10,
+    showQuickJumper: true,
+    showSizeChanger: true,
+    showTotal: null
+});
+
+const pageChange = (page: number, pageSize: number) => {
+    emit('tableChange', { current: page, pageSize: pageSize })
+}
+
+const pageShowSizeChange = (current: number, size: number) => {
+    emit('tableChange', { current, pageSize: size })
+}
+
+watch(() => props.pagination, (newVal) => {
+    pagination = newVal
 })
 
 </script>

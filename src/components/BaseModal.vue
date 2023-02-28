@@ -1,19 +1,17 @@
 <template>
     <a-modal :centered="true" :visible="props.visible" :title="props.title" :width="props.width || 520"
-        @cancel="handleCancel" @ok="handleOk" :afterClose="afterClose">
+        @cancel="handleCancel" @ok="handleOk" @afterClose="afterClose">
         <template v-if="props.component">
-            <component :is="props.component"></component>
+            <component :is="props.component" :test="'modalTest'"></component>
         </template>
         <template v-else>
             <slot></slot>
         </template>
         <template #footer>
-            <template v-if="props.showFooter">
-                <a-button key="back" @click="handleCancel">取消</a-button>
-                <a-button key="submit" type="primary" :loading="formLoading" @click="handleOk">
-                    提交
-                </a-button>
-            </template>
+            <a-button key="back" @click="handleCancel">取消</a-button>
+            <a-button key="submit" type="primary" :loading="formLoading" @click="handleOk">
+                提交
+            </a-button>
         </template>
     </a-modal>
 </template>
@@ -38,27 +36,39 @@ const props = defineProps({
         type: String,
         default: () => ''
     },
-    showFooter: {
-        type: Boolean,
-        default: () => true
+    onRegister: {
+        type: Function,
+        default: () => { }
+    },
+    afterClose: {
+        type: Function,
+        default: () => { }
     },
     width: [String, Number]
 })
 
-console.log(props);
+const emits = defineEmits(['cancel', 'ok', 'register'])
 
-const emits = defineEmits(['cancel', 'ok', 'afterClose'])
+watch(() => props.visible, newVal => {
+    console.log(newVal);
+})
+
+onMounted(() => {
+    emits('register', {
+
+    })
+})
 
 const handleOk = () => {
-    emits('ok');
+    emits('ok')
 }
 
 const handleCancel = () => {
-    emits('cancel');
+    emits('cancel')
 }
 
 const afterClose = () => {
-    emits('afterClose');
+    props.afterClose()
 }
 </script>
 <style lang="less" scoped></style>
