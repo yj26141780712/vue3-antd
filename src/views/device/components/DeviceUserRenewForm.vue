@@ -4,18 +4,23 @@
         <a-form :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
             <a-row :gutter="[16, 16]">
                 <a-col span="24">
-                    <a-form-item has-feedback :label="'设备id'" v-bind="validateInfos.sn">
+                    <a-form-item has-feedback :label="''" v-bind="validateInfos.sn">
                         <a-input v-model:value="modelRef.sn" autocomplete="off"></a-input>
                     </a-form-item>
                 </a-col>
                 <a-col span="24">
-                    <a-form-item has-feedback :label="'购买人姓名'" v-bind="validateInfos.buyPersonName">
+                    <a-form-item has-feedback :label="'姓名'" v-bind="validateInfos.buyPersonName">
                         <a-input v-model:value="modelRef.buyPersonName" autocomplete="off"></a-input>
                     </a-form-item>
                 </a-col>
                 <a-col span="24">
-                    <a-form-item has-feedback :label="'购买人手机号'" v-bind="validateInfos.buyPersonPhone">
-                        <a-input v-model:value="modelRef.buyPersonPhone" autocomplete="off"></a-input>
+                    <a-form-item has-feedback :label="'姓名'" v-bind="validateInfos.buyPersonName">
+                        <a-input v-model:value="modelRef.buyPersonName" autocomplete="off"></a-input>
+                    </a-form-item>
+                </a-col>
+                <a-col span="24">
+                    <a-form-item has-feedback :label="'姓名'" v-bind="validateInfos.buyPersonName">
+                        <a-input v-model:value="modelRef.buyPersonName" autocomplete="off"></a-input>
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -24,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { createDeviceApi, updateDeviceByIdApi } from '@/api/sell';
 import type { DeviceModel } from '@/api/sell/model/deviceModel';
 import { getObjectValue } from '@/utils/form';
 import { Form } from 'ant-design-vue';
@@ -78,11 +82,7 @@ const ok = () => {
     formLoading.value = true;
     validate()
         .then(() => {
-            if (!props.option.item) {
-                return createDeviceApi(toRaw(modelRef));
-            } else {
-                return updateDeviceByIdApi(props.option.item.id, toRaw(modelRef));
-            }
+
         })
         .then(() => {
             isOk = true;

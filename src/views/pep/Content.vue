@@ -1,5 +1,5 @@
 <template>
-    <CardList class="page-container" :dataSrouce="dataSrouce" :pagination="pagination" :loading="false" @reload="reload"
+    <CardList class="page-container" :dataSource="dataSource" :pagination="pagination" :loading="false" @reload="reload"
         @tableChange="handleTableChange">
         <template #search>
             <a-form ref="searchFormRef" :model="searchFormState">
@@ -91,8 +91,8 @@ const loadData = function (params: any) {
     })
 }
 const total = ref(0);
-const { data: dataSrouce, run, loading, current, pageSize } = usePagination(loadData, {
-    formatResult: (res: Result<PepModel>) => {
+const { data: dataSource, run, loading, current, pageSize } = usePagination(loadData, {
+    formatResult: (res: Result<PepModel[]>) => {
         total.value = res.total;
         console.log(res);
         return res.data;

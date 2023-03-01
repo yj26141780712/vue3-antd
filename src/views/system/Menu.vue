@@ -1,5 +1,5 @@
 <template>
-    <BaseList class="page-container" :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="false"
+    <BaseList class="page-container" :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="false"
         :showScroll="true" @reload="reload" :options="{ searchToolHeight: 80 }">
         <template #search>
             <a-form ref="searchFormRef" :model="searchFormState">
@@ -126,7 +126,7 @@ const loadData = function () {
     return getMenuListApi({ name: '' });
 }
 
-const { data: dataSrouce, run, loading } = usePagination(loadData, {
+const { data: dataSource, run, loading } = usePagination(loadData, {
     formatResult: (res: Result<MenuModel>) => {
         menuDatas = res.data as [];
         return toTreeData(res.data as [] || []);

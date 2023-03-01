@@ -1,4 +1,4 @@
-import type { RequestOptions } from "@/types/axios";
+import type { RequestOptions, Result } from "@/types/axios";
 import { http } from "@/utils/http";
 import type { Pagination } from "../comon/model/Pagination";
 import type { PepModel } from "./model/pepModel";
@@ -6,7 +6,7 @@ import type { PepModel } from "./model/pepModel";
 export function getPepListApi(params: PepModel & Pagination, options: RequestOptions = {
     errorMessageMode: 'message', successMessageMode: 'none', isTransformResponse: false
 }) {
-    return http.get<PepModel[]>({
+    return http.get<Result<PepModel[]>>({
         url: 'pep/list',
         params: params
     }, options);

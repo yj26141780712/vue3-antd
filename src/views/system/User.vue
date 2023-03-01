@@ -2,13 +2,13 @@
     <div class="page-container">
         <a-row :gutter="[16, 16]">
             <a-col :xs="24" :md="8" :lg="6">
-                <a-tabs v-model:activeKey="activeKey" :centered="true" @change="tabChange">
+                <!-- <a-tabs v-model:activeKey="activeKey" :centered="true" @change="tabChange">
                     <a-tab-pane key="system" tab="系统账户">
                     </a-tab-pane>
                     <a-tab-pane key="normal" tab="客户账户">
                     </a-tab-pane>
-                </a-tabs>
-                <div style="padding: 12px 18px">
+                </a-tabs> -->
+                <div style="padding: 36px 18px 12px">
                     <!-- <a-input-search v-model:value="searchValue" style="margin-bottom: 8px" placeholder="Search" /> -->
                     <a-tree v-if="treeData.length" v-model:selectedKeys="selectedKeys" :tree-data="treeData" block-node
                         defaultExpandAll @select="selectTreeNode">
@@ -22,7 +22,7 @@
                 </div>
             </a-col>
             <a-col :xs="24" :md="16" :lg="18">
-                <BaseList :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="pagination"
+                <BaseList :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
                     :showScroll="true" :options="{ searchToolHeight: 80 }" @reload="reload"
                     @tableChange="handleTableChange">
                     <template #search>
@@ -228,7 +228,7 @@ const loadData = function (params: any) {
 const total = ref(0);
 const sortField = ref('');
 const sortOrder = ref('');
-const { data: dataSrouce, run, loading, current, pageSize } = usePagination(loadData, {
+const { data: dataSource, run, loading, current, pageSize } = usePagination(loadData, {
     formatResult: (res: Result<any>) => {
         total.value = res.total;
         return res.data;

@@ -8,7 +8,7 @@
                 <div class="table-tool-left">
                     <slot name="button"></slot>
                 </div>
-                <div class="table-tool-right">
+                <div v-if="showRightTool" class="table-tool-right">
                     <div class="table-tool-setting-item">
                         <a-tooltip>
                             <template #title>刷新</template>
@@ -72,7 +72,7 @@
                 </div>
             </div>
             <div class="table-warpper">
-                <a-table :columns="selectedColumns" :data-source="dataSrouce" :size="tableSize" :loading="loading"
+                <a-table :columns="selectedColumns" :data-source="dataSource" :size="tableSize" :loading="loading"
                     :pagination="props.pagination" :scroll="showScroll ? scroll : {}" @change="handleTableChange">
                     <template #headerCell="{ column }">
                         <slot name="headerCell" :column="column">
@@ -82,6 +82,9 @@
                     <template #bodyCell="{ column, record }">
                         <slot name="bodyCell" :column="column" :record=record></slot>
                     </template>
+                    <!-- <template v-if="props.expandedRowRender" #expandedRowRender>
+
+                    </template> -->
                 </a-table>
             </div>
         </div>
@@ -112,7 +115,11 @@ const props = defineProps({
         type: Array,
         default: (): BaseTableColumn[] => []
     },
-    dataSrouce: {
+    expandedRowRender: {
+        type: Boolean,
+        default: false
+    },
+    dataSource: {
         type: Array,
         default: () => []
     },
@@ -131,6 +138,10 @@ const props = defineProps({
     pagination: {
         type: [Object, Boolean],
         default: false
+    },
+    showRightTool: {
+        type: Boolean,
+        default: true
     }
 })
 
@@ -155,7 +166,7 @@ const isFullScreen = ref(false);
 const windowHeight = window.innerHeight;
 const scroll = computed(() => {
     return {
-        x: props.columns.reduce(((p: any, c) => (p.width || 60) + c), 0),
+        x: props.columns.reduce(((p: any, c: any) => (c.width || 60) + p), 0),
         y: isFullScreen.value ? windowHeight :
             (windowHeight - tableOtherHeight
                 - (themeSetting.value.showManytabs ? tableTabsHeight : 0)
@@ -164,6 +175,7 @@ const scroll = computed(() => {
     };
 })
 
+console.log(scroll.value)
 
 const onCheckAllChange = (e: any) => {
     if (e.target.checked) {

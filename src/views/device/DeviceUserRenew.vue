@@ -61,7 +61,6 @@ import DeviceForm from './components/DeviceForm.vue';
 import DeviceUser1 from './components/DeviceUser1.vue'; //使用人
 import DeviceUser2 from './components/DeviceUser2.vue'; //监护人
 
-
 interface FormState {
     sn: string;
 }
@@ -69,7 +68,7 @@ interface FormState {
 const { createConfirm } = useMessage();
 
 defineOptions({
-    name: 'SellDevice',
+    name: 'DeviceUserRenew',
 });
 
 

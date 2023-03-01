@@ -34,8 +34,8 @@
                 <a-spin tip="Loading..." :spinning="props.loading">
                     <a-empty v-if="showEmpty" :image="simpleImage" />
                     <a-row :gutter="[16, 16]">
-                        <a-col v-for="(item, index) in dataSrouce" :xs="24" :sm="24" :md="12" :lg="8">
-                            <a-card style="width: 300px">
+                        <a-col v-for="(item, index) in dataSource" :xs="24" :sm="24" :md="12" :lg="8">
+                            <a-card>
                                 <template #title>
                                     <slot name="cardTitle" :item="item"></slot>
                                 </template>
@@ -84,7 +84,7 @@ const props = defineProps({
         type: Array,
         default: (): BaseTableColumn[] => []
     },
-    dataSrouce: {
+    dataSource: {
         type: Array,
         default: () => []
     },
@@ -108,7 +108,7 @@ const props = defineProps({
 
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE
 const showEmpty = computed(() => {
-    return !(props.dataSrouce && props.dataSrouce.length > 0);
+    return !(props.dataSource && props.dataSource.length > 0);
 });
 
 const baseTable = ref(null);

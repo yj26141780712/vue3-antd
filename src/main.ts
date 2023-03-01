@@ -6,11 +6,12 @@ import '@/assets/styles/global.less'
 import i18n from './locals'
 import { createFromIconfontCN } from '@ant-design/icons-vue';
 import "dayjs/locale/zh-cn"; //日期组件部分不显示中文
+import "dayjs/locale/en"; //日期组件部分不显示中文
 const app = createApp(App)
 
 
 const IconFont = createFromIconfontCN({
-    scriptUrl: '//at.alicdn.com/t/c/font_3227979_p7el7jtcuro.js',
+    scriptUrl: '//at.alicdn.com/t/c/font_3227979_7rtwhgbwi23.js',
 });
 
 app.component('IconFont', IconFont)

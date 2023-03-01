@@ -1,5 +1,5 @@
 <template>
-    <BaseList class="page-container" :columns="columns" :dataSrouce="dataSrouce" :loading="loading" :pagination="pagination"
+    <BaseList class="page-container" :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
         @reload="reload" @tableChange="handleTableChange">
         <template #search>
             <a-form ref="searchFormRef" :model="searchFormState">
@@ -191,7 +191,7 @@ const loadData = function (params: any) {
 const total = ref(0);
 const sortField = ref('');
 const sortOrder = ref('');
-const { data: dataSrouce, run, loading, current, pageSize } = usePagination(loadData, {
+const { data: dataSource, run, loading, current, pageSize } = usePagination(loadData, {
     formatResult: (res: Result<CompanyModel>) => {
         total.value = res.total;
         return res.data;

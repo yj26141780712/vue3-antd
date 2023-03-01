@@ -1,6 +1,6 @@
 <template>
-    <BaseForm :visible="formVisible" :title="props.title" :formLoading="formLoading" @cancel="handleCancel" @ok="handleOk"
-        @afterClose="afterClose">
+    <BaseForm :visible="formVisible" :title="props.title" :formLoading="formLoading" :showScroll="true"
+        @cancel="handleCancel" @ok="handleOk" @afterClose="afterClose">
         <a-form :labelCol="{ span: 6 }" :wrapperCol="{ span: 16 }">
             <a-row :gutter="[16, 16]">
                 <a-col span="24">

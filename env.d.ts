@@ -14,6 +14,8 @@ declare module 'gsap';
 
 declare module 'vue-request';
 
+declare module 'lodash-es'
+
 
 // declare module 'unplugin-vue-define-options/vite';
 

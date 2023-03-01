@@ -45,6 +45,11 @@ export const asyncRouter: readonly RouteRecordRaw[] = [
                         component: () => import('@/views/device/Device.vue')
                     },
                     {
+                        path: 'userRenew', name: 'DeviceUserRenew',
+                        meta: { title: '续费记录', keepAlive: true },
+                        component: () => import('@/views/device/DeviceUserRenew.vue')
+                    },
+                    {
                         path: 'hitchRegister', name: 'SellHitchRegister',
                         meta: { title: '故障登记', keepAlive: true },
                         component: () => import('@/views/device/HitchRegister.vue')
